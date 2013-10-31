@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0050B52D-683C-4194-86CB-10454FA38851</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ThunderBolt</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>18815E20-51EE-4428-853F-A25C696C0BC4</key>
+		<string>https://github.com/soapyigu/ThunderBolt.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ThunderBolt/ThunderBolt.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>18815E20-51EE-4428-853F-A25C696C0BC4</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/soapyigu/ThunderBolt.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>18815E20-51EE-4428-853F-A25C696C0BC4</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>18815E20-51EE-4428-853F-A25C696C0BC4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ThunderBolt</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -22,6 +22,7 @@
 		0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C34182187FB00FC094A /* yspngenc.cpp */; };
 		0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C391821880A00FC094A /* fsmacosxwrappercpp.cpp */; };
 		0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C3A1821880A00FC094A /* fsmacosxwrapperobjc.m */; };
+		0BDD66A41823160A005D635D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A21823160A005D635D /* Plane.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		0B774C391821880A00FC094A /* fsmacosxwrappercpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fsmacosxwrappercpp.cpp; sourceTree = "<group>"; };
 		0B774C3A1821880A00FC094A /* fsmacosxwrapperobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fsmacosxwrapperobjc.m; sourceTree = "<group>"; };
 		0B774C3B1821880A00FC094A /* fssimplewindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fssimplewindow.h; sourceTree = "<group>"; };
+		0BDD66A21823160A005D635D /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
+		0BDD66A31823160A005D635D /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,8 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
+				0BDD66A21823160A005D635D /* Plane.cpp */,
+				0BDD66A31823160A005D635D /* Plane.h */,
 				0B774C0F1821870500FC094A /* MainMenu.xib */,
 				0B774C121821870500FC094A /* Images.xcassets */,
 				0B774C011821870500FC094A /* Supporting Files */,
@@ -272,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B774C36182187FB00FC094A /* ysglfontdata.c in Sources */,
+				0BDD66A41823160A005D635D /* Plane.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
 				0B774C37182187FB00FC094A /* yspng.cpp in Sources */,
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
@@ -486,6 +492,7 @@
 				0B774C2A1821870600FC094A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0B774C2B1821870600FC094A /* Build configuration list for PBXNativeTarget "ThunderBoltTests" */ = {
 			isa = XCConfigurationList;
@@ -494,6 +501,7 @@
 				0B774C2D1821870600FC094A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
