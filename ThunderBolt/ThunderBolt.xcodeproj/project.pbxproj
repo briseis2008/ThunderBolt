@@ -23,6 +23,8 @@
 		0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C391821880A00FC094A /* fsmacosxwrappercpp.cpp */; };
 		0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C3A1821880A00FC094A /* fsmacosxwrapperobjc.m */; };
 		0BDD66A41823160A005D635D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A21823160A005D635D /* Plane.cpp */; };
+		0BDD66A9182317D5005D635D /* vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A5182317D5005D635D /* vector.cpp */; };
+		0BDD66AA182317D5005D635D /* missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A8182317D5005D635D /* missile.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,10 @@
 		0B774C3B1821880A00FC094A /* fssimplewindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fssimplewindow.h; sourceTree = "<group>"; };
 		0BDD66A21823160A005D635D /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
 		0BDD66A31823160A005D635D /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
+		0BDD66A5182317D5005D635D /* vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vector.cpp; sourceTree = "<group>"; };
+		0BDD66A6182317D5005D635D /* missile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = missile.h; sourceTree = "<group>"; };
+		0BDD66A7182317D5005D635D /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
+		0BDD66A8182317D5005D635D /* missile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = missile.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,8 +137,12 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
-				0BDD66A21823160A005D635D /* Plane.cpp */,
+				0BDD66A7182317D5005D635D /* vector.h */,
+				0BDD66A5182317D5005D635D /* vector.cpp */,
+				0BDD66A6182317D5005D635D /* missile.h */,
+				0BDD66A8182317D5005D635D /* missile.cpp */,
 				0BDD66A31823160A005D635D /* Plane.h */,
+				0BDD66A21823160A005D635D /* Plane.cpp */,
 				0B774C0F1821870500FC094A /* MainMenu.xib */,
 				0B774C121821870500FC094A /* Images.xcassets */,
 				0B774C011821870500FC094A /* Supporting Files */,
@@ -278,10 +288,12 @@
 			files = (
 				0B774C36182187FB00FC094A /* ysglfontdata.c in Sources */,
 				0BDD66A41823160A005D635D /* Plane.cpp in Sources */,
+				0BDD66AA182317D5005D635D /* missile.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
 				0B774C37182187FB00FC094A /* yspng.cpp in Sources */,
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
 				0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */,
+				0BDD66A9182317D5005D635D /* vector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
