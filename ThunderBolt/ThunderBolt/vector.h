@@ -16,6 +16,7 @@ public:
     const Vector operator- (const Vector &rhs) const;
     const Vector operator* (const double rhs) const;
     const Vector operator/ (const double rhs) const;
+    Vector& Vector::operator= (const Vector &rhs);
     
     inline void set(double x, double y) {this->x = x; this->y = y;}
     inline void negate() {x = -x; y = -y;}
