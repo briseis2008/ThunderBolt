@@ -34,14 +34,24 @@ private:
 public:
     Missile(MissileType type, int color, int power, int shootMode, Vector position, Vector velocity);
     Missile(MissileType type, int color, int power, int shootMode, Vector position);
-    Missile(MissileType type, int color, Vector position);
+    Missile(MissileType type, int color, Vector position, Vector velocity);
     Missile();
     void Launch(Vector position);
     void Draw(void);
     void Move(Vector newPosition);
     void Move();
     int CheckInWindow(void);
+    
+    void setType(MissileType type);
+    MissileType getType();
+    
+    void setColor(int color);
     Vector getPosition();
+    
+    void setPosition(Vector position);
+    
+    void setVelocity(Vector velocity);
+    
 };
 
 #endif

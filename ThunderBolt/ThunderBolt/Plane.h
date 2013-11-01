@@ -13,6 +13,7 @@ class Plane
 protected:
     int plane_state;
     int life_num;
+    int size_x, size_y;
     Vector position;
     Vector velocity;
     int missile_state;
@@ -23,13 +24,21 @@ public:
     
     Plane(int plane_state, Vector position, Vector velocity, int missile_state);
     
-    void Move(int key);
+    void Draw();
     
-    void Disappear();
+    int getPlaneState();
     
-    int CheckHit(Vector comingPosition);
+    void Move();
     
-    void Shoot(Vector startPosition);
+    void Disappear(void);
+    
+    int CheckHit(Missile missile);
+    
+    Missile getMissile();
+    
+    void Shoot(int key);
+    
+    void setMissile(MissileType type,int color, Vector position, Vector velocity);
     
 };
 

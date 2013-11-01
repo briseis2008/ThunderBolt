@@ -41,9 +41,11 @@ Missile::Missile(MissileType type, int color, int power, int shootMode, Vector p
     this->power = power;
     this->shootMode = shootMode;
     this->position = position;
+   
+    
 }
 
-Missile::Missile(MissileType type, int color, Vector position)
+Missile::Missile(MissileType type, int color, Vector position, Vector velocity)
 {
     state = 0;
     this->type = type;
@@ -52,6 +54,7 @@ Missile::Missile(MissileType type, int color, Vector position)
     this->green = (color>>8)&0xff;
     this->blue = color&0xff;
     this->position = position;
+    this->velocity = velocity;
 }
 
 Missile::Missile()
@@ -163,6 +166,31 @@ void Missile::Move()
     position.x += velocity.x;
 }
 
+MissileType Missile::getType(){
+    return type;
+}
+
+void Missile::setType(MissileType type){
+    this->type = type;
+}
+
+void Missile::setColor(int color){
+    this->color = color;
+}
+
+void Missile::setPosition(Vector position){
+    this->position = position;
+}
+
+void Missile::setVelocity(Vector velocity){
+    this->velocity = velocity;
+}
+
+
+
+
+
+/*
 int main(void)
 {
     Vector bulletV(0, -10);
@@ -223,3 +251,4 @@ int main(void)
 
     return 0;
 }
+ */
