@@ -91,15 +91,17 @@ int Plane::getPlaneState(){
 }
 
 void Plane::Shoot(int key){
+    Vector velocity(0, -10);
+    
     if(FsGetKeyState(FSKEY_J)!=0){
-        Vector velocity(0, -10);
-        setMissile(CANNON, 255, position, velocity);
         
-        missile.Launch(position);
-
+        Vector shoot_position(position.x+size_x/2, position.y-size_y);
+        setMissile(CANNON, 255, shoot_position, velocity);
+        
+        missile.Launch(shoot_position);
     }
     else if(FsGetKeyState(FSKEY_K)!=0){
-        Vector velocity(0, -10);
+        
         setMissile(BULLET, 255, position, velocity);
         missile.Launch(position);
         
@@ -154,7 +156,7 @@ int main(void){
         
         plane.Shoot(key);
         
-       
+        
         
         
         FsSwapBuffers();
