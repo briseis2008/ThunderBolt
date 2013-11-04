@@ -13,6 +13,8 @@ Plane::Plane()
 {
     this->plane_state = 1;
     this->life_num = 3;
+    this->size_x=50;
+    this->size_y=50;
     this->position = Vector(0,0);
     this->velocity = Vector(0,0);
     this->missile_state = 0;
@@ -21,8 +23,11 @@ Plane::Plane()
 
 Plane::Plane(int plane_state, Vector position, Vector velocity, int missile_state)
 {
+    
     this->plane_state = plane_state;
     this->position = position;
+    this->size_x=50;
+    this->size_y=50;
     this->velocity = velocity;
     this->missile_state = missile_state;
     // the same as above function
@@ -90,44 +95,59 @@ int Plane::getPlaneState(){
     return plane_state;
 }
 
-void Plane::Shoot(int key){
+Missile Plane::Shoot(){
     Vector velocity(0, -10);
+    Vector shoot_position(position.x+size_x/2, position.y-size_y);
     
     if(FsGetKeyState(FSKEY_J)!=0){
-        
-        Vector shoot_position(position.x+size_x/2, position.y-size_y);
-        setMissile(CANNON, 255, shoot_position, velocity);
+        Missile missile;
+        missile.setType(CANNON);
+        missile.setColor(255);
+        missile.setPosition(shoot_position);
+        missile.setVelocity(velocity);
         
         missile.Launch(shoot_position);
+        return missile;
     }
-    else if(FsGetKeyState(FSKEY_K)!=0){
+    else if(FsGetKeyState(FSKEY_K)!=0) {
+        Missile missile;
+        missile.setType(BULLET);
         
-        setMissile(BULLET, 255, position, velocity);
-        missile.Launch(position);
+        missile.setColor(255);
+        missile.setPosition(shoot_position);
+        missile.setVelocity(velocity);
         
+        missile.Launch(shoot_position);
+        return missile;
     }
     
-    missile.Move();
-    missile.Draw();
+    
+    
+    else if(FsGetKeyState(FSKEY_L)!=0){
+        Missile missile;
+        missile.setType(LASER);
+        
+        missile.setColor(255);
+        missile.setPosition(shoot_position);
+        
+        missile.Launch(shoot_position);
+        missile.Draw();
+        return missile;
+    }
+    else{
+        Missile missile;
+        return missile;
+    }
+    
+    
     
 }
-
-void Plane::setMissile(MissileType type,int color, Vector position, Vector velocity){
-    missile.setType(type);
-    missile.setColor(color);
-    missile.setPosition(position);
-    missile.setVelocity(velocity);
-}
-
-Missile Plane::getMissile(){
-    return missile;
-}
-
-
 
 int main(void){
     Vector startPoisiton(20, 580);
     Vector startSpeed(10, 10);
+    
+    Missile missile[20];
     
     Plane plane(1, startPoisiton, startSpeed, 0);
     
@@ -153,9 +173,17 @@ int main(void){
         
         
         plane.Move();
-        
-        plane.Shoot(key);
-        
+        int i=0;
+        while(i<20){
+            if(FsGetKeyState(FSKEY_J)!=0 || FsGetKeyState(FSKEY_K)!=0 || FsGetKeyState(FSKEY_L)!=0 )
+                missile[i] = plane.Shoot();
+
+            if(missile[i].getType() == CANNON || missile[i].getType() == BULLET){
+                missile[i].Draw();
+                missile[i].Move();
+                i++;
+            }
+        }
         
         
         
