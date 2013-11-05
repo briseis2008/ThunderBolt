@@ -1,14 +1,15 @@
+#ifndef ThunderBolt_Missile_h
+#define ThunderBolt_Missile_h
+
 #include <stdio.h>
 #include <math.h>
 #include "vector.h"
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
-
-#ifndef ThunderBolt_Missile_h
-#define ThunderBolt_Missile_h
+#include "data.h"
 
 
-const double YS_PI=3.1415927;
+
 
 enum MissileType
 {
