@@ -179,6 +179,9 @@ int main(void){
             if(missile[i].getState() == 1 && missile[i].getType() != LASER){
                 missile[i].Draw();
                 missile[i].Move();
+                if(missile[i].getPosition().y<0){
+                    missile[i].setState(0);
+                }
            
             }
         }
