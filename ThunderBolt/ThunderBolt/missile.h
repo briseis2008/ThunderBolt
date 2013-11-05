@@ -52,6 +52,9 @@ public:
     
     void setVelocity(Vector velocity);
     
+    void setState(int state);
+    int getState();
+    
 };
 
 #endif

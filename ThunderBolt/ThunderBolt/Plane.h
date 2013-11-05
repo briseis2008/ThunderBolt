@@ -17,6 +17,7 @@ protected:
     Vector position;
     Vector velocity;
     int missile_state;
+    Missile missile[20];
     
 public:
     Plane();
@@ -33,7 +34,7 @@ public:
     
     int CheckHit(Missile missile);
     
-    Missile Shoot();
+    void Shoot(int key, Missile &missile);
     
     void setMissile(MissileType type,int color, Vector position, Vector velocity);
     

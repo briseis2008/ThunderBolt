@@ -95,22 +95,21 @@ int Plane::getPlaneState(){
     return plane_state;
 }
 
-Missile Plane::Shoot(){
+void Plane::Shoot(int key, Missile &missile){
     Vector velocity(0, -10);
     Vector shoot_position(position.x+size_x/2, position.y-size_y);
     
-    if(FsGetKeyState(FSKEY_J)!=0){
-        Missile missile;
+    if(key == FSKEY_J){
         missile.setType(CANNON);
         missile.setColor(255);
         missile.setPosition(shoot_position);
         missile.setVelocity(velocity);
         
         missile.Launch(shoot_position);
-        return missile;
+        printf("%d\n", missile.getState());
+        
     }
-    else if(FsGetKeyState(FSKEY_K)!=0) {
-        Missile missile;
+    if(key == FSKEY_K) {
         missile.setType(BULLET);
         
         missile.setColor(255);
@@ -118,13 +117,12 @@ Missile Plane::Shoot(){
         missile.setVelocity(velocity);
         
         missile.Launch(shoot_position);
-        return missile;
+        
     }
     
     
     
-    else if(FsGetKeyState(FSKEY_L)!=0){
-        Missile missile;
+    if(key == FSKEY_L){
         missile.setType(LASER);
         
         missile.setColor(255);
@@ -132,13 +130,8 @@ Missile Plane::Shoot(){
         
         missile.Launch(shoot_position);
         missile.Draw();
-        return missile;
     }
-    else{
-        Missile missile;
-        return missile;
-    }
-    
+
     
     
 }
@@ -171,17 +164,22 @@ int main(void){
             plane.Draw();
         }
         
-        
         plane.Move();
-        int i=0;
-        while(i<20){
-            if(FsGetKeyState(FSKEY_J)!=0 || FsGetKeyState(FSKEY_K)!=0 || FsGetKeyState(FSKEY_L)!=0 )
-                missile[i] = plane.Shoot();
-
-            if(missile[i].getType() == CANNON || missile[i].getType() == BULLET){
+        
+        
+        for(int i=0; i<20; i++){
+            if(missile[i].getState() == 0){
+                plane.Shoot(key, missile[i]);
+                break;
+            }
+        }
+    
+        for(int i=0; i<20; i++){
+            
+            if(missile[i].getState() == 1 && missile[i].getType() != LASER){
                 missile[i].Draw();
                 missile[i].Move();
-                i++;
+           
             }
         }
         

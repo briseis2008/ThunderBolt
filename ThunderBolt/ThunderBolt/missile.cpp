@@ -186,6 +186,14 @@ void Missile::setVelocity(Vector velocity){
     this->velocity = velocity;
 }
 
+void Missile::setState(int state){
+    this->state =  state;
+}
+
+int Missile::getState(){
+    return state;
+}
+
 
 
 
