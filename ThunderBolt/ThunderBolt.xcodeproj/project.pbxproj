@@ -70,6 +70,7 @@
 		0BDD66A6182317D5005D635D /* missile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = missile.h; sourceTree = "<group>"; };
 		0BDD66A7182317D5005D635D /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		0BDD66A8182317D5005D635D /* missile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = missile.cpp; sourceTree = "<group>"; };
+		12F5E803182940D4009B4249 /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +143,7 @@
 				0BDD66A6182317D5005D635D /* missile.h */,
 				0BDD66A8182317D5005D635D /* missile.cpp */,
 				0BDD66A31823160A005D635D /* Plane.h */,
+				12F5E803182940D4009B4249 /* data.h */,
 				0BDD66A21823160A005D635D /* Plane.cpp */,
 				0B774C0F1821870500FC094A /* MainMenu.xib */,
 				0B774C121821870500FC094A /* Images.xcassets */,
