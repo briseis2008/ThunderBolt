@@ -15,12 +15,3 @@ const Vector Vector::operator/ (const double rhs) const {
     if (rhs == 0) return *this;
     return Vector(x / rhs, y / rhs);
 }
-
-Vector& Vector::operator= (const Vector &rhs) {
-    if (&rhs != this)
-    {
-        this->x = rhs.x;
-        this->y = rhs.y;
-    }
-    return *this;
-}
