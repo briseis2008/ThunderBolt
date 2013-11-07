@@ -7,7 +7,7 @@
 
 /******************** General Macros ********************/
 
-const double YS_PI=3.1415927;
+#define YS_PI=3.1415927
 
 
 
