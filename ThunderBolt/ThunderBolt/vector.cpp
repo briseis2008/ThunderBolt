@@ -1,17 +1,70 @@
 #include "vector.h"
+#include <assert.h>
 
-const Vector Vector::operator+ (const Vector &rhs) const {
-    return Vector(x + rhs.x, y + rhs.y);
+Vector2& Vector2::operator+= (const Vector2 &rhs) {
+    this->x += rhs.x;
+    this->y += rhs.y;
+    return *this;
 }
 
-const Vector Vector::operator- (const Vector &rhs) const {
-    return Vector(x - rhs.x, y - rhs.y);
+Vector2& Vector2::operator-= (const Vector2 &rhs) {
+    this->x -= rhs.x;
+    this->y -= rhs.y;
+    return *this;
 }
 
-const Vector Vector::operator* (const double rhs) const {
-    return Vector(x * rhs, y * rhs);
+Vector2& Vector2::operator*= (const double rhs) {
+    this->x *= rhs;
+    this->y *= rhs;
+    return *this;
 }
-const Vector Vector::operator/ (const double rhs) const {
-    if (rhs == 0) return *this;
-    return Vector(x / rhs, y / rhs);
+
+Vector2& Vector2::operator/= (const double rhs) {
+    assert(rhs != 0.0);
+    
+    this->x /= rhs;
+    this->y /= rhs;
+    return *this;
 }
+
+const Vector2 Vector2::operator+ (const Vector2 &rhs) const {
+    Vector2 result = *this;
+    result += rhs;
+    return result;
+}
+
+const Vector2 Vector2::operator- (const Vector2 &rhs) const {
+    Vector2 result = *this;
+    result -= rhs;
+    return result;
+}
+
+const Vector2 Vector2::operator* (const double rhs) const {
+    Vector2 result = *this;
+    result *= rhs;
+    return result;
+}
+const Vector2 Vector2::operator/ (const double rhs) const {
+    assert(rhs != 0.0);
+    Vector2 result = *this;
+    result /= rhs;
+    return result;
+}
+
+void Vector2::normalize() {
+    double len = length();
+    if (len == 0) return;
+    x = x / len;
+    y = y / len;
+}
+
+
+void Vector2::rotate(double rad) {
+    double cosTheta = cos(rad);
+    double sinTheta = sin(rad);
+    double newX = x * cosTheta - y * sinTheta;
+    double newY = x * sinTheta + y * cosTheta;
+    x = newX;
+    y = newY;
+}
+

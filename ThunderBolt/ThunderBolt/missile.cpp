@@ -1,36 +1,36 @@
 #include "missile.h"
+#include "debug.h"
 
-Vector Missile::getPosition()
+Missile::Missile(MissileType type, const Color &color, int power,
+                 const Vector2 &position, const Vector2 &velocity, int shootMode)
 {
-    return position;
-}
-
-void Missile::Launch(Vector position)
-{
-    if(state == 0)
-    {
-        if(type == LASER)
-            countDown = 100;
-        state = 1;
-        this->position = position;
-    }
-}
-
-Missile::Missile(MissileType type, int color, int power, int shootMode, Vector position, Vector velocity)
-{
-    state = 0;
     this->type = type;
     this->color = color;
-    this->red = (color>>16)&0xff;
-    this->green = (color>>8)&0xff;
-    this->blue = color&0xff;
     this->power = power;
-    this->shootMode = shootMode;
     this->position = position;
     this->velocity = velocity;
+    this->direction = velocity;
+    this->direction.normalize();
+
+    state = 1;
+    this->shootMode = shootMode;
 }
 
-Missile::Missile(MissileType type, int color, int power, int shootMode, Vector position)
+Missile::Missile()
+{
+    this->color = gBlack;
+    this->power = 0;
+    this->position = Vector2(0,0);
+    this->velocity = Vector2(0,0);
+    this->direction = velocity;
+    this->direction.normalize();
+
+    state = 0;
+    this->shootMode = 0;
+}
+
+/*
+Missile::Missile(MissileType type, int color, int power, int shootMode, Vector2 position)
 {
     state = 0;
     this->type = type;
@@ -45,7 +45,7 @@ Missile::Missile(MissileType type, int color, int power, int shootMode, Vector p
     
 }
 
-Missile::Missile(MissileType type, int color, Vector position, Vector velocity)
+Missile::Missile(MissileType type, int color, Vector2 position, Vector2 velocity)
 {
     state = 0;
     this->type = type;
@@ -56,29 +56,12 @@ Missile::Missile(MissileType type, int color, Vector position, Vector velocity)
     this->position = position;
     this->velocity = velocity;
 }
-
-Missile::Missile()
-{
-    state = 0;
-    this->color = 0;
-    this->red = (color>>16)&0xff;
-    this->green = (color>>8)&0xff;
-    this->blue = color&0xff;
-    this->power = 0;
-    this->shootMode = 0;
-    this->position = Vector(0,0);
-    this->velocity = Vector(0,0);
-}
+*/
 
 int Missile::CheckInWindow(void)
 {
-    if(type == LASER)
-    {
-        countDown -= 5;
-        if(countDown < 0)
-            state = 0;
-    }
-    else if(position.y<0 || position.y > 600)
+    if (position.y < 0 || position.y >= WINDOW_HEI ||
+        position.x < 0 || position.x >= WINDOW_WID)
     {
         state = 0;
     }
@@ -89,81 +72,9 @@ int Missile::CheckInWindow(void)
     return state;
 }
 
-void Missile::Draw(void)
-{
-    if (state)
-    {
-        switch(type)
-        {
-        case BULLET:
-            glColor3ub(red,green,blue);
-            glBegin(GL_LINES);
-            glVertex2d(position.x,position.y);
-            glVertex2d(position.x,position.y-10);
-            glEnd();
-            break;
-        case LASER:
-            glShadeModel(GL_SMOOTH);
-
-            glBegin(GL_QUADS);
-
-            glColor3ub(red,green,blue);
-            glVertex2d(position.x,      position.y);
-
-            glColor3ub(red,green,blue);
-            glVertex2d(position.x,      0);
-
-            glColor3ub(255,255,255);
-            glVertex2d(position.x + 10, 0);
-
-            glColor3ub(255,255,255);
-            glVertex2d(position.x + 10, position.y);
-
-
-            glColor3ub(red,green,blue);
-            glVertex2d(position.x + 20, position.y);
-
-            glColor3ub(red,green,blue);
-            glVertex2d(position.x + 20, 0);
-
-            glColor3ub(255,255,255);
-            glVertex2d(position.x + 10, 0);
-
-            glColor3ub(255,255,255);
-            glVertex2d(position.x + 10, position.y);
-
-            glEnd();
-            break;
-        case CANNON:
-
-            glBegin(GL_POLYGON);
-
-            glColor3ub(red,green,blue);
-            int i;
-            for(i=0; i<64; i++)
-            {
-                double angle=(double)i*YS_PI/32.0;
-                double x=position.x+cos(angle)*(double)10;
-                double y=position.y+sin(angle)*(double)10;
-                glVertex2d(x,y);
-            }
-
-            glEnd();
-            break;
-
-        }
-    }
-}
-
-void Missile::Move(Vector newPosition)
-{
-    position = newPosition;
-}
-
 void Missile::Move()
 {
-    position.y += velocity.y;
-    position.x += velocity.x;
+    position += velocity;
 }
 
 MissileType Missile::getType(){
@@ -174,15 +85,20 @@ void Missile::setType(MissileType type){
     this->type = type;
 }
 
-void Missile::setColor(int color){
+void Missile::setColor(const Color &color){
     this->color = color;
 }
 
-void Missile::setPosition(Vector position){
+void Missile::setPosition(const Vector2 &position){
     this->position = position;
 }
 
-void Missile::setVelocity(Vector velocity){
+Vector2 Missile::getPosition()
+{
+    return position;
+}
+
+void Missile::setVelocity(const Vector2 &velocity){
     this->velocity = velocity;
 }
 
@@ -195,30 +111,125 @@ int Missile::getState(){
 }
 
 
+void Missile::Launch(Vector2 position)
+{
+    if(state == 0)
+    {
+        state = 1;
+        this->position = position;
+    }
+}
+
+void Missile::Move(Vector2 newPosition)
+{
+    position = newPosition;
+}
 
 
 
-/*
+void Bullet::Draw() {
+    if (state) {
+        glColor3ubv(color.arr());
+        glBegin(GL_LINES);
+        glVertex2d(position.x + direction.x * len ,position.y + direction.y * len);
+        glVertex2d(position.x - direction.x * len ,position.y - direction.y * len);
+        glEnd();
+    }
+}
+
+
+
+void Cannon::Draw() {
+    if (state) {
+        glBegin(GL_POLYGON);
+
+        glColor3ubv(color.arr());
+        int i;
+        for(i=0; i<64; i++)
+        {
+            double angle=(double)i*PI/32.0;
+            double x=position.x+cos(angle)*radius;
+            double y=position.y+sin(angle)*radius;
+            glVertex2d(x,y);
+        }
+
+        glEnd();
+    }
+}
+
+
+
+void Laser::Draw() {
+    if (state) {
+        //TODO: set up shade model in game engine when possible
+        glShadeModel(GL_SMOOTH);
+
+        double dirX = direction.x * WINDOW_DIAG;
+        double dirY = direction.y * WINDOW_DIAG;
+        double widX = direction.y * width;
+        double widY = -direction.x * width;
+
+        glBegin(GL_QUADS);
+
+        glColor3ubv(color.arr());
+        glVertex2d(position.x + widX, position.y + widY);
+        glVertex2d(position.x + widX + dirX, position.y + widY + dirY);
+
+        glColor3ubv(gWhite.arr());
+        glVertex2d(position.x + dirX, position.y + dirY);
+        glVertex2d(position.x, position.y);
+
+
+        glVertex2d(position.x + dirX, position.y + dirY);
+        glVertex2d(position.x, position.y);
+
+        glColor3ubv(color.arr());
+        glVertex2d(position.x - widX, position.y - widY);
+        glVertex2d(position.x - widX + dirX, position.y - widY + dirY);
+
+
+        glEnd();
+
+    }
+}
+
+
+int Laser::CheckInWindow() {
+    if(countDown <= 0)
+        state = 0;
+    else 
+        state = 1;
+    return state;
+}
+
+void Laser::Move() {
+    countDown -= 5;
+}
+
+
+#ifdef MISSILE_DEBUG
 int main(void)
 {
-    Vector bulletV(0, -10);
-    Vector cannonV(0, -20);
-    Vector bulletPosition(300, 400);
-    Vector laserPosition(100, 400);
-    Vector cannonPosition(200, 400);
-    Vector velocity(1, 1);
-    Missile laser(LASER, 255, 1, 1, laserPosition);
-    Missile bullet(BULLET, 255<<16, 1, 1, bulletPosition, bulletV);
-    Missile cannon(CANNON, (255<<8)+255, 1, 1, cannonPosition, cannonV);
+    Vector2 bulletV(0, -10);
+    Vector2 cannonV(0, -20);
+    Vector2 laserV(0, -1);
+    Vector2 bulletPosition(300, 400);
+    Vector2 laserPosition(100, 400);
+    Vector2 cannonPosition(200, 400);
+    Vector2 velocity(1, 1);
+    MissileList missiles;
+    Missile *missile;
+    int laserReload = 0;
+    int cannonReload = 0;
+    int bulletReload = 0;
 
-    FsOpenWindow(0,0,800,600,1);
+
+    FsOpenWindow(0,0,600, 800,1);
 
     bool running = true;
 
     while(running)
     {
-
-
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
         FsPollDevice();
 
@@ -229,28 +240,52 @@ int main(void)
         }
         else if(FSKEY_UP==key)
         {
-
+            bulletV.rotate(0.1);
+            cannonV.rotate(0.1);
+            laserV.rotate(0.1);
         }
         else if(FSKEY_DOWN==key)
         {
-
+            bulletV.rotate(-0.1);
+            cannonV.rotate(-0.1);
+            laserV.rotate(-0.1);
         }
         else if(FSKEY_SPACE==key)
         {
-            laser.Launch(laserPosition);
-            bullet.Launch(bulletPosition);
-            cannon.Launch(cannonPosition);
-
+            if (laserReload <= 0) {
+                laserReload = 100;
+                missile = new Laser(gBlue, 100, laserPosition, laserV, 1);
+                missiles.InsertFront(missile);
+            }
+            if (bulletReload <= 0) {
+                bulletReload = 100;
+                missile = new Bullet(gRed, 100, bulletPosition, bulletV, 1);
+                missiles.InsertFront(missile);
+            }
+            if (cannonReload <= 0) {
+                cannonReload = 100;
+                missile = new Cannon(gGreen, 100, cannonPosition, cannonV, 1);
+                missiles.InsertFront(missile);
+            }
         }
 
-        bullet.Move();
-        cannon.Move();
-        cannon.CheckInWindow();
-        bullet.CheckInWindow();
-        laser.CheckInWindow();
-        cannon.Draw();
-        bullet.Draw();
-        laser.Draw();
+        MissileNode *node;
+        node = missiles.getFront();
+        while(node) {
+            node->dat->Move();
+            node->dat->Draw();
+            if (!node->dat->CheckInWindow()) {
+                node = missiles.Delete(node);
+            } else {
+                node = node->next;
+            }
+        }
+        
+        if (laserReload > 0) laserReload -= 5;
+        if (bulletReload > 0) bulletReload -= 10;
+        if (cannonReload > 0) cannonReload -= 10;
+
+
         FsSwapBuffers();
 
 
@@ -259,4 +294,4 @@ int main(void)
 
     return 0;
 }
- */
+#endif

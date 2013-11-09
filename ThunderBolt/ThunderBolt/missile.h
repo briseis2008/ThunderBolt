@@ -3,12 +3,12 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "vector.h"
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
-#include "data.h"
-
-
+#include "vector.h"
+#include "color.h"
+#include "global.h"
+#include "linked_list.h"
 
 
 enum MissileType
@@ -20,42 +20,85 @@ enum MissileType
 
 class Missile
 {
-private:
+protected:
+    Color color;
+    Vector2 position;
+    Vector2 velocity;
+    Vector2 direction;
+
     MissileType type;
-    int state;
-    int color;
-    int red;
-    int green;
-    int blue;
     int power;
+
+    //TODO:make sure we really need these two parameters
+    int state;
     int shootMode;
-    int countDown;
-    Vector position;
-    Vector velocity;
+
 public:
-    Missile(MissileType type, int color, int power, int shootMode, Vector position, Vector velocity);
-    Missile(MissileType type, int color, int power, int shootMode, Vector position);
-    Missile(MissileType type, int color, Vector position, Vector velocity);
     Missile();
-    void Launch(Vector position);
-    void Draw(void);
-    void Move(Vector newPosition);
-    void Move();
-    int CheckInWindow(void);
-    
+    Missile(MissileType type, const Color &color, int power, 
+            const Vector2 &position, const Vector2 &velocity, int shootMode);
+    /*
+    Missile(MissileType type, int color, int power, int shootMode, const Vector2 &position);
+    Missile(MissileType type, int color, Vector2 position, Vector2 velocity);
+    */
+    virtual ~Missile() {};
+
+    virtual void Draw(void) = 0;
+    virtual int CheckInWindow(void);
+    virtual void Move();
+
     void setType(MissileType type);
     MissileType getType();
     
-    void setColor(int color);
-    Vector getPosition();
+    void setColor(const Color &color);
     
-    void setPosition(Vector position);
+    void setPosition(const Vector2 &position);
+    Vector2 getPosition();
     
-    void setVelocity(Vector velocity);
+    void setVelocity(const Vector2 &velocity);
     
     void setState(int state);
     int getState();
     
+    void Launch(Vector2 position);
+    void Move(Vector2 newPosition);
+
 };
+
+class Bullet : public Missile {
+    double len;
+public:
+    Bullet(const Color &color, int power, const Vector2 &position, 
+           const Vector2 &velocity, int shootMode, double l = 10.0) 
+         : Missile(BULLET, color, power, position, velocity, shootMode),
+           len(l){};
+    void Draw();
+};
+
+class Cannon : public Missile {
+    double radius;
+public:
+    Cannon(const Color &color, int power, const Vector2 &position, 
+           const Vector2 &velocity, int shootMode, double r = 10.0) 
+         : Missile(CANNON, color, power, position, velocity, shootMode), 
+           radius(r) {};
+    void Draw();
+};
+
+class Laser : public Missile {
+    int countDown;
+    double width;
+public:
+    Laser (const Color &color, int power, const Vector2 &position, 
+           const Vector2 &velocity, int shootMode, double w = 5.0) 
+         : Missile(CANNON, color, power, position, velocity, shootMode), 
+           countDown(100), width(w) {};
+    void Draw();
+    int CheckInWindow();
+    void Move();
+};
+
+typedef DoublyLinkedList<Missile*> MissileList;
+typedef ListNode<Missile*> MissileNode;
 
 #endif
