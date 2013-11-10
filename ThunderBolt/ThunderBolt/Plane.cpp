@@ -8,6 +8,7 @@
 
 #include "Plane.h"
 #include "missile.h"
+#include "debug.h"
 
 Plane::Plane()
 {
@@ -15,13 +16,13 @@ Plane::Plane()
     this->life_num = 3;
     this->size_x=50;
     this->size_y=50;
-    this->position = Vector(0,0);
-    this->velocity = Vector(0,0);
+    this->position = Vector2(0,0);
+    this->velocity = Vector2(0,0);
     this->missile_state = 0;
     // need to set missile according to state, like this->missile = Missile.set(missile_state);
 }
 
-Plane::Plane(int plane_state, Vector position, Vector velocity, int missile_state)
+Plane::Plane(int plane_state, Vector2 position, Vector2 velocity, int missile_state)
 {
     
     this->plane_state = plane_state;
@@ -67,8 +68,9 @@ void Plane::Disappear(void){
     this->life_num--;
 }
 
-int Plane::CheckHit(Missile missile)
+int Plane::CheckHit(Missile *missile)
 {
+    /*
 	if(missile.getType() == BULLET){
 		if(missile.getPosition().x>=position.x && missile.getPosition().x<=position.x+size_x && missile.getPosition().y>=position.y-size_y && missile.getPosition().y-10<=position.y)
 			return 1;
@@ -87,7 +89,8 @@ int Plane::CheckHit(Missile missile)
 		else
 			return 0;
 	}else
-        return 0;
+      */
+    return 0;
 }
 
 
@@ -95,9 +98,10 @@ int Plane::getPlaneState(){
     return plane_state;
 }
 
-void Plane::Shoot(int key, Missile &missile){
-    Vector velocity(0, -10);
-    Vector shoot_position(position.x+size_x/2, position.y-size_y);
+void Plane::Shoot(int key, MissileList &missile){
+    /*
+    Vector2 velocity(0, -10);
+    Vector2 shoot_position(position.x+size_x/2, position.y-size_y);
     
     if(key == FSKEY_J){
         missile.setType(CANNON);
@@ -132,21 +136,27 @@ void Plane::Shoot(int key, Missile &missile){
         missile.Draw();
     }
 
-    
+    */
     
 }
 
+#ifdef PLANE_DEBUG
+
 int main(void){
-    Vector startPoisiton(20, 580);
-    Vector startSpeed(10, 10);
+
+    Vector2 startPoisiton(20, 580);
+    Vector2 startSpeed(10, 10);
     
-    Missile missile[20];
+    PlaneList planes;
     
-    Plane plane(1, startPoisiton, startSpeed, 0);
     
-    FsOpenWindow(0,0,800,600,1);
+    planes.InsertFront(new Plane(1, startPoisiton, startSpeed, 0));
+    FsOpenWindow(16 , 16 , 800, 600,1);
     
     bool running = true;
+    
+    //Plane plane(1, startPoisiton, startSpeed, 0);
+    
     
     while(running)
     {
@@ -160,13 +170,17 @@ int main(void){
             break;
         }
         
-        if(plane.getPlaneState() == 1){
-            plane.Draw();
+        PlaneNode *node = NULL;
+        node = planes.getFront();
+        
+        while (node) {
+            node->dat->Move();
+            node->dat->Draw();
+            node = node->next;
+            // Check hit, if plane got hit, delete it from list
         }
         
-        plane.Move();
-        
-        
+        /*
         for(int i=0; i<20; i++){
             if(missile[i].getState() == 0){
                 plane.Shoot(key, missile[i]);
@@ -186,7 +200,7 @@ int main(void){
             }
         }
         
-        
+        */
         
         FsSwapBuffers();
         FsSleep(25);
@@ -195,5 +209,6 @@ int main(void){
     return 0;
 }
 
+#endif
 
 
