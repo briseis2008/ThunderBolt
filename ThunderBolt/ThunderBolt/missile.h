@@ -56,6 +56,7 @@ public:
     Vector2 getPosition();
     
     void setVelocity(const Vector2 &velocity);
+    void setDirection(const Vector2 &direction);
     
     void setState(int state);
     int getState();
@@ -85,18 +86,26 @@ public:
     void Draw();
 };
 
+class Plane;
+
 class Laser : public Missile {
     int countDown;
     double width;
+    /* so that we could keep track of plane direction & position */
+    Plane *plane;
 public:
     Laser (const Color &color, int power, const Vector2 &position, 
            const Vector2 &velocity, int shootMode, double w = 5.0) 
-         : Missile(CANNON, color, power, position, velocity, shootMode), 
-           countDown(100), width(w) {};
+         : Missile(LASER, color, power, position, velocity, shootMode), 
+           countDown(20), width(w) {};
     void Draw();
     int CheckInWindow();
+    void setPlane(Plane *plane);
     void Move();
 };
+
+/* allocate and create a new missile according to "Missile *missile" */
+Missile *CopyMissile(Missile *missile);
 
 typedef DoublyLinkedList<Missile*> MissileList;
 typedef ListNode<Missile*> MissileNode;

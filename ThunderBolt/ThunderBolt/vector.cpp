@@ -68,3 +68,4 @@ void Vector2::rotate(double rad) {
     y = newY;
 }
 
+const Vector2 gZero(0.0, 0.0);

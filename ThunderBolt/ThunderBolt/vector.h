@@ -39,4 +39,6 @@ public:
 
 };
 
+extern const Vector2 gZero;
+
 #endif

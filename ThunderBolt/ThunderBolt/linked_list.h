@@ -28,8 +28,8 @@ public:
     ListNode<T>* getFront();
     ListNode<T>* getBack();
 
-    void InsertFront(const T &dat);
-    void InsertBack(const T &dat);
+    ListNode<T>* InsertFront(const T &dat);
+    ListNode<T>* InsertBack(const T &dat);
 
     /* delete current node, and return original next node */
     ListNode<T>* Delete(ListNode<T> *node);
@@ -54,7 +54,7 @@ ListNode<T>* DoublyLinkedList<T>::getBack() {
 }
 
 template <class T>
-void DoublyLinkedList<T>::InsertFront(const T &dat) {
+ListNode<T>* DoublyLinkedList<T>::InsertFront(const T &dat) {
     /* allocate new node */
     ListNode<T> *newNode = new ListNode<T>(dat);
     assert(newNode);
@@ -67,10 +67,12 @@ void DoublyLinkedList<T>::InsertFront(const T &dat) {
         head->prev = newNode;
         head = newNode;
     }
+    
+    return newNode;
 }
 
 template <class T>
-void DoublyLinkedList<T>::InsertBack(const T &dat) {
+ListNode<T>* DoublyLinkedList<T>::InsertBack(const T &dat) {
     /* allocate new node */
     ListNode<T> *newNode = new ListNode<T>(dat);
     assert(newNode);
@@ -83,6 +85,8 @@ void DoublyLinkedList<T>::InsertBack(const T &dat) {
         newNode->prev = tail;
         tail = newNode;
     }
+    
+    return newNode;
 }
 
 template <class T>

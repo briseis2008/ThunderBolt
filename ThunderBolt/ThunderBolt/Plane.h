@@ -6,45 +6,83 @@
 #include "vector.h"
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
-#include "color.h"
 #include "missile.h"
+
+
+#define PLANE_NORMAL 1
+#define PLANE_SUPER  2
+
+#define MAX_MISSILE_LEVEL 5
 
 class Plane
 {
 protected:
-    int plane_state;
-    int life_num;
     int size_x, size_y;
+    
     Vector2 position;
-    Vector2 velocity;
     Vector2 direction;
-    int missile_state;
+    double velocity;
+    
+    Missile *missile;
+    int missile_level;
+    int missile_reload;
+    
+    /* keep track of the laser we shoot so we could stop it when needed */
+    MissileNode *laser;
+    
+    int plane_state;
+    int firing;
+    
+    void ParseAction(int mouse);
+    void ReloadLaser(MissileList &missiles);
+    Vector2 getMissilePos();
     
 public:
-    Plane();
+    Plane();    
+    Plane(const Vector2 &position, const Vector2 &direction, int plane_state);
+    virtual ~Plane();
     
-    Plane(int plane_state, Vector2 position, Vector2 velocity, int missile_state);
+    virtual void Draw() = 0;
     
-    void Draw();
-
-    //TODO: Need state?
     int getPlaneState();
+    void setPlaneState(int state);
+    void setVelocity(double velocity);
     
-    void Move();
-    
-    void Disappear(void);
+    virtual void Move(double deltaT);
+
+    void Shoot(int action, MissileList &missiles);
+    void CoolDown();
     
     int CheckHit(Missile *missile);
     
-    void Shoot(int key, MissileList &missile);
+    void setMissile(MissileType type, const Color &color, int power,
+                    const Vector2 &velocity, MissileList &missiles);
+    void setMissile(Missile *missile, MissileList &missiles);
+                    
+    void PowerUp();
     
-    void setMissile(MissileType type, int color, Vector2 position, Vector2 velocity);
-    
+    friend class Laser;
+};
+
+class Thunder : public Plane {
+protected:
+    int life_num; 
+public:
+    Thunder(const Vector2 &position, const Vector2 &direction);
+    void Draw();
+    void Move(double deltaT);
+};
+
+class Enemy1 : public Plane {
+public:
+    Enemy1(const Vector2 &position, const Vector2 &direction)
+         : Plane(position, direction, PLANE_NORMAL) {};  
+    void Draw();  
 };
 
 
-typedef DoublyLinkedList<Plane *> PlaneList;
-typedef ListNode<Plane *> PlaneNode;
+typedef DoublyLinkedList<Plane*> PlaneList;
+typedef ListNode<Plane*> PlaneNode;
 
 
 #endif

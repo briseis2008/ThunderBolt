@@ -1,4 +1,5 @@
 #include "missile.h"
+#include "plane.h"
 #include "debug.h"
 
 Missile::Missile(MissileType type, const Color &color, int power,
@@ -102,6 +103,12 @@ void Missile::setVelocity(const Vector2 &velocity){
     this->velocity = velocity;
 }
 
+void Missile::setDirection(const Vector2 &direction) {
+    double vel = velocity.length();
+    this->direction = direction;
+    this->velocity = direction * vel;
+}
+
 void Missile::setState(int state){
     this->state =  state;
 }
@@ -158,6 +165,10 @@ void Cannon::Draw() {
 }
 
 
+void Laser::setPlane(Plane *plane) {
+    this->plane = plane;
+}
+
 
 void Laser::Draw() {
     if (state) {
@@ -203,7 +214,32 @@ int Laser::CheckInWindow() {
 }
 
 void Laser::Move() {
-    countDown -= 5;
+    /* generally should not happen */
+    if (!plane) return;
+    
+    direction = plane->direction;
+    position = plane->getMissilePos();
+}
+
+Missile *CopyMissile(Missile *missile) {
+    if (missile == NULL) return NULL;
+    
+    Missile *newMissile;
+    switch (missile->getType()) {
+        case BULLET:
+            newMissile = new Bullet(*(Bullet *)missile);
+            break;
+            
+        case CANNON:
+            newMissile = new Cannon(*(Cannon *)missile);
+            break;
+            
+        case LASER:
+            newMissile = new Laser(*(Laser *)missile);
+            break;
+    }
+    assert(newMissile);
+    return newMissile;
 }
 
 
@@ -219,10 +255,11 @@ int main(void)
     Vector2 velocity(1, 1);
     MissileList missiles;
     Missile *missile;
+    MissileNode *laser = NULL;
     int laserReload = 0;
     int cannonReload = 0;
     int bulletReload = 0;
-
+    int firing = 0;
 
     FsOpenWindow(0,0,600, 800,1);
 
@@ -234,6 +271,9 @@ int main(void)
         FsPollDevice();
 
         int key=FsInkey();
+        int lb, mb, rb, mx, my;
+        int mouse = FsGetMouseEvent(lb, mb, rb, mx, my);
+
         if(FSKEY_ESC==key)
         {
             running=false;
@@ -250,12 +290,18 @@ int main(void)
             cannonV.rotate(-0.1);
             laserV.rotate(-0.1);
         }
-        else if(FSKEY_SPACE==key)
-        {
+        
+        if(FSMOUSEEVENT_LBUTTONDOWN == mouse) {
+            firing = 1;
+        } else if (FSMOUSEEVENT_LBUTTONUP == mouse) {
+            firing = 0;
+        }
+            
+        if (firing == 1) {
             if (laserReload <= 0) {
                 laserReload = 100;
                 missile = new Laser(gBlue, 100, laserPosition, laserV, 1);
-                missiles.InsertFront(missile);
+                laser = missiles.InsertFront(missile);
             }
             if (bulletReload <= 0) {
                 bulletReload = 100;
@@ -267,6 +313,11 @@ int main(void)
                 missile = new Cannon(gGreen, 100, cannonPosition, cannonV, 1);
                 missiles.InsertFront(missile);
             }
+        }
+        else if (firing == 0 && laser) {
+            missiles.Delete(laser);
+            laser = NULL;
+            laserReload = 0;
         }
 
         MissileNode *node;
@@ -281,11 +332,14 @@ int main(void)
             }
         }
         
-        if (laserReload > 0) laserReload -= 5;
         if (bulletReload > 0) bulletReload -= 10;
         if (cannonReload > 0) cannonReload -= 10;
 
-
+/*
+if(key == FSKEY_UP) printf("UP!!!!\n");
+if(key == FSKEY_SPACE) printf("SPACE!!!\n");
+if (FsCheckKeyHeldDown()) printf("KEY DOWN!!!\n");
+*/
         FsSwapBuffers();
 
 

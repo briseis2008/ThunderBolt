@@ -10,63 +10,50 @@
 #include "missile.h"
 #include "debug.h"
 
+
 Plane::Plane()
 {
-    this->plane_state = 1;
-    this->life_num = 3;
+    this->plane_state = PLANE_NORMAL;
     this->size_x=50;
     this->size_y=50;
-    this->position = Vector2(0,0);
-    this->velocity = Vector2(0,0);
-    this->missile_state = 0;
-    // need to set missile according to state, like this->missile = Missile.set(missile_state);
+    this->position = gZero;
+    this->direction = gZero;
+    this->velocity = 0.0;
+    this->missile = NULL;
+    this->missile_level = 1;
+    this->missile_reload = 0;
+    this->laser = NULL;
+    this->firing = 0;
 }
 
-Plane::Plane(int plane_state, Vector2 position, Vector2 velocity, int missile_state)
+Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state)
 {
-    
     this->plane_state = plane_state;
-    this->position = position;
     this->size_x=50;
     this->size_y=50;
-    this->velocity = velocity;
-    this->missile_state = missile_state;
-    // the same as above function
+    this->position = position;
+    this->direction = direction;
+    this->direction.normalize();
+    this->velocity = 0.0;
+    this->missile = NULL;
+    this->missile_level = 1;
+    this->missile_reload = 0;
+    this->laser = NULL;
+    this->firing = 0;
 }
 
-void Plane::Draw(){
-    glColor3ub(255,0,0);
-    glBegin(GL_QUADS);
-    glVertex2d(position.x,position.y);
-    glVertex2d(position.x,position.y-50);
-    glVertex2d(position.x+50,position.y-50);
-    glVertex2d(position.x+50,position.y);
-    glEnd();
-    
-}
-
-void Plane::Move(){
-    if(FsGetKeyState(FSKEY_A)!=0)
-	{
-		position.x -= velocity.x;
-	}
-	else if(FsGetKeyState(FSKEY_D)!=0)
-	{
-		position.x += velocity.x;
-	}
-    else if(FsGetKeyState(FSKEY_S)!=0)
-    {
-        position.y += velocity.y;
-    }
-    else if(FsGetKeyState(FSKEY_W)!=0){
-        position.y -= velocity.y;
+Plane::~Plane() {
+    if (missile) {
+        delete missile;
     }
 }
 
-void Plane::Disappear(void){
-    this->plane_state = 0;
-    this->life_num--;
+
+
+void Plane::Move(double deltaT){
+    position += direction * velocity * deltaT;
 }
+
 
 int Plane::CheckHit(Missile *missile)
 {
@@ -89,8 +76,8 @@ int Plane::CheckHit(Missile *missile)
 		else
 			return 0;
 	}else
-      */
-    return 0;
+        */
+        return 0;
 }
 
 
@@ -98,11 +85,117 @@ int Plane::getPlaneState(){
     return plane_state;
 }
 
-void Plane::Shoot(int key, MissileList &missile){
-    /*
-    Vector2 velocity(0, -10);
-    Vector2 shoot_position(position.x+size_x/2, position.y-size_y);
+void Plane::setPlaneState(int state) {
+    this->plane_state = state;
+}
+
+void Plane::setVelocity(double velocity) {
+    this->velocity = velocity;
+}
+
+
+void Plane::setMissile(MissileType type, const Color &color, int power,
+                       const Vector2 &velocity, MissileList &missiles) {
+    Missile *newMissile = NULL;
+    switch (type) {
+        case BULLET:
+            newMissile = new Bullet(color, power, gZero, velocity, 1);
+            break;
+            
+        case CANNON:
+            newMissile = new Cannon(color, power, gZero, velocity, 1);
+            break;
+            
+        case LASER:
+            newMissile = new Laser(color, power, gZero, velocity, 1);
+            break;
+    }
+    assert(newMissile);
     
+    if (missile) {
+        delete missile;
+    }
+    
+    missile = newMissile;
+    missile_level = 1;
+    missile_reload = 0;
+    
+    /* make sure we cancel current laser and reload */
+    ReloadLaser(missiles);
+}
+
+void Plane::setMissile(Missile *missile, MissileList &missiles) {
+    Missile *newMissile = CopyMissile(missile);
+    
+    if (this->missile) {
+        delete this->missile;
+    }
+    this->missile = newMissile;
+    
+    missile = newMissile;
+    missile_level = 1;
+    missile_reload = 0;
+    
+    /* make sure we cancel current laser and reload */
+    ReloadLaser(missiles);   
+}
+
+
+Vector2 Plane::getMissilePos() {
+    return position + direction * (size_y / 2);
+}
+
+void Plane::ParseAction(int mouse) {
+    if (FSMOUSEEVENT_LBUTTONDOWN == mouse) {
+        firing = 1;
+    } else if (FSMOUSEEVENT_LBUTTONUP == mouse) {
+        firing = 0;
+    }
+}
+
+void Plane::ReloadLaser(MissileList &missiles) {
+    if (laser) {
+        missiles.Delete(laser);
+        laser = NULL;
+        missile_reload = 0;
+    }
+}
+
+void Plane::Shoot(int action, MissileList &missiles){
+    ParseAction(action);
+    
+    if (firing == 1) {
+        /* wait for weapon to cool down */
+        if (missile_reload > 0) return;
+
+        Vector2 shootPosition = getMissilePos();
+    
+        Missile *newMissile = CopyMissile(missile);
+        newMissile->setPosition(shootPosition);
+        newMissile->setDirection(direction);
+        
+        MissileNode *newNode = missiles.InsertBack(newMissile);
+        switch(newMissile->getType()) {
+            case BULLET:
+                missile_reload = 10;
+                break;
+                
+            case CANNON:
+                missile_reload = 20;
+                break;
+                
+            case LASER:
+                laser = newNode;
+                ((Laser *)newMissile)->setPlane(this);
+                missile_reload = 20;
+                break;
+        }
+    } else {
+        ReloadLaser(missiles);
+    }
+
+
+    /*
     if(key == FSKEY_J){
         missile.setType(CANNON);
         missile.setColor(255);
@@ -140,23 +233,85 @@ void Plane::Shoot(int key, MissileList &missile){
     
 }
 
+
+void Plane::CoolDown(){
+    if (missile_reload <= 0) return;
+    if (missile->getType() == LASER) return;
+    missile_reload--;
+}
+
+void Plane::PowerUp() {
+    if (missile_level <= MAX_MISSILE_LEVEL) {
+        missile_level++;
+    }
+}
+
+Thunder::Thunder(const Vector2 &position, const Vector2 &direction) 
+               : Plane(position, direction, PLANE_NORMAL) {
+    life_num = 3;
+}
+
+
+void Thunder::Move(double deltaT) {
+    if(FsGetKeyState(FSKEY_A)!=0)
+	{
+		position.x -= velocity;
+	}
+	else if(FsGetKeyState(FSKEY_D)!=0)
+	{
+		position.x += velocity;
+	}
+    else if(FsGetKeyState(FSKEY_S)!=0)
+    {
+        position.y += velocity;
+    }
+    else if(FsGetKeyState(FSKEY_W)!=0){
+        position.y -= velocity;
+    }
+}
+
+void Thunder::Draw(){
+    glColor3ub(255,0,0);
+    glBegin(GL_POLYGON);
+    glVertex2d(position.x,position.y - size_y/2);
+    glVertex2d(position.x + size_x / 2, position.y + size_y/2);
+    glVertex2d(position.x - size_x / 2, position.y + size_y/2);
+    glEnd();
+    
+}
+
+void Enemy1::Draw() {
+    glColor3ub(255,0,0);
+    glBegin(GL_QUADS);
+    glVertex2d(position.x,position.y);
+    glVertex2d(position.x,position.y-50);
+    glVertex2d(position.x+50,position.y-50);
+    glVertex2d(position.x+50,position.y);
+    glEnd();
+}
+
+
 #ifdef PLANE_DEBUG
-
 int main(void){
-
-    Vector2 startPoisiton(20, 580);
-    Vector2 startSpeed(10, 10);
+    Vector2 startPosition(300, 280);
+    Vector2 startDirection(0, -1);
     
-    PlaneList planes;
+    MissileList missiles;
+    Missile *sample[3];
+    sample[0] = new Bullet(gRed, 100, gZero, Vector2(0, -20), 1);
+    sample[1] = new Cannon(gGreen, 100, gZero, Vector2(0, -10), 1);
+    sample[2] = new Laser(gBlue, 100, gZero, Vector2(0, -1), 1);
     
+    Plane *plane;
+    Thunder thunder(startPosition, startDirection);
+    thunder.setVelocity(5);
+    thunder.setMissile(LASER, gBlue, 100, Vector2(0, -1), missiles);
+    plane = &thunder;
     
-    planes.InsertFront(new Plane(1, startPoisiton, startSpeed, 0));
-    FsOpenWindow(16 , 16 , 800, 600,1);
+    FsOpenWindow(0,0,800,600,1);
     
     bool running = true;
-    
-    //Plane plane(1, startPoisiton, startSpeed, 0);
-    
+    int i = 0;
     
     while(running)
     {
@@ -164,43 +319,39 @@ int main(void){
         FsPollDevice();
         
         int key=FsInkey();
+        int lb, mb, rb, mx, my;
+        int mouse = FsGetMouseEvent(lb, mb, rb, mx, my);
+
         if(FSKEY_ESC==key)
         {
             running=false;
             break;
         }
+        if (FSMOUSEEVENT_RBUTTONDOWN == mouse) {
+            plane->setMissile(sample[i], missiles);
+            i = (i+1) % 3;
+        }
         
-        PlaneNode *node = NULL;
-        node = planes.getFront();
+        plane->Shoot(mouse, missiles);
+        plane->CoolDown();
         
-        while (node) {
+        plane->Move(1.0);
+        plane->Draw();
+        
+        
+        MissileNode *node;
+        node = missiles.getFront();
+        while(node) {
             node->dat->Move();
             node->dat->Draw();
-            node = node->next;
-            // Check hit, if plane got hit, delete it from list
-        }
-        
-        /*
-        for(int i=0; i<20; i++){
-            if(missile[i].getState() == 0){
-                plane.Shoot(key, missile[i]);
-                break;
-            }
-        }
-    
-        for(int i=0; i<20; i++){
-            
-            if(missile[i].getState() == 1 && missile[i].getType() != LASER){
-                missile[i].Draw();
-                missile[i].Move();
-                if(missile[i].getPosition().y<0){
-                    missile[i].setState(0);
-                }
-           
+            if (!node->dat->CheckInWindow()) {
+                node = missiles.Delete(node);
+            } else {
+                node = node->next;
             }
         }
         
-        */
+        
         
         FsSwapBuffers();
         FsSleep(25);
@@ -208,7 +359,7 @@ int main(void){
     
     return 0;
 }
-
 #endif
+
 
 
