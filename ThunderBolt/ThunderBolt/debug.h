@@ -4,7 +4,7 @@
 //#define LINKED_LIST_DEBUG
 #define PLANE_DEBUG
 //#define MISSILE_DEBUG
-
+//#define PRIZE_DEBUG
 #include <stdio.h>
 
 #endif

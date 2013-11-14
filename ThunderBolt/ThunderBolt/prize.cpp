@@ -44,6 +44,9 @@ void Prize::Disappear()
         prize_state = 0;
     }
 }
+
+
+#PRIZE_DEBUG
 int main(void)
 {
     Prize prize;
@@ -79,3 +82,5 @@ int main(void)
     return 0;
     
 }
+
+#endif
