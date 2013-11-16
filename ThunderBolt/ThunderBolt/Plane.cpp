@@ -44,6 +44,7 @@ Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state,
     this->life = life;
 }
 
+/* we are nice people, free memory before we go */
 Plane::~Plane() {
     if (missile) {
         delete missile;
@@ -51,12 +52,14 @@ Plane::~Plane() {
 }
 
 
-
+/* move plane accordingly */
 void Plane::Move(double deltaT){
+    /* deltaS = v * deltaT */
     position += direction * velocity * deltaT;
 }
 
 
+/* check if plane is hit by missile */
 int Plane::CheckHit(Missile *missile)
 {
     double dist;
@@ -72,12 +75,13 @@ int Plane::CheckHit(Missile *missile)
             if (dist <= size_x / 2 + ((Cannon *)missile)->radius) return 1;            
             break;
             
+        /* laser is special, have to calculate distance from plane to laser */
         case LASER:
             double a = missile->direction.y;
             double b = -missile->direction.x;
             double c = missile->direction.x * missile->position.y 
                      - missile->direction.y * missile->position.x;
-            /* distance from point to line */
+            /* equation: distance from point to line */
             dist = fabs(a * position.x + b * position.y + c)
                  / sqrt(a * a + b * b);
             if (dist <= size_x / 2 + ((Laser *)missile)->width) return 1;
@@ -94,6 +98,7 @@ int Plane::CheckHit(MissileList &missiles) {
         if (CheckHit(node->dat)) {
             life -= node->dat->power;
             
+            /* do not delete missile */
             if (node->dat->getType() != LASER) 
                 node = missiles.Delete(node);
             else 
@@ -343,7 +348,7 @@ void Enemy1::Draw() {
     }
 
     glEnd();
-    }
+}
 
 
 #ifdef PLANE_DEBUG
