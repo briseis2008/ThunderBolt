@@ -5,6 +5,8 @@
 #define PLANE_DEBUG
 //#define MISSILE_DEBUG
 //#define PRIZE_DEBUG
+//#define TEXTURE_LOADER_DEBUG
+
 #include <stdio.h>
 
 #endif

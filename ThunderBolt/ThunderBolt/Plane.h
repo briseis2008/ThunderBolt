@@ -17,8 +17,6 @@
 class Plane
 {
 protected:
-    int size_x, size_y;
-    
     Vector2 position;
     Vector2 direction;
     double velocity;
@@ -32,6 +30,8 @@ protected:
     
     int plane_state;
     int firing;
+    int size_x, size_y;    
+    int life;
     
     void ParseAction(int mouse);
     void ReloadLaser(MissileList &missiles);
@@ -39,26 +39,27 @@ protected:
     
 public:
     Plane();    
-    Plane(const Vector2 &position, const Vector2 &direction, int plane_state);
+    Plane(const Vector2 &position, const Vector2 &direction, int plane_state, int life = 100);
     virtual ~Plane();
-    
-    virtual void Draw() = 0;
     
     int getPlaneState();
     void setPlaneState(int state);
     void setVelocity(double velocity);
     
+    virtual void Draw() = 0;
     virtual void Move(double deltaT);
+    virtual int CheckHit(Missile *missile);
+    virtual int CheckHit(MissileList &missiles);
+    virtual int CheckHit(Plane *plane);
 
     void Shoot(int action, MissileList &missiles);
     void CoolDown();
     
-    int CheckHit(Missile *missile);
-    
     void setMissile(MissileType type, const Color &color, int power,
                     const Vector2 &velocity, MissileList &missiles);
     void setMissile(Missile *missile, MissileList &missiles);
-                    
+    
+    int CheckInWindow();
     void PowerUp();
     
     friend class Laser;
@@ -76,7 +77,7 @@ public:
 class Enemy1 : public Plane {
 public:
     Enemy1(const Vector2 &position, const Vector2 &direction)
-         : Plane(position, direction, PLANE_NORMAL) {};  
+         : Plane(position, direction, PLANE_NORMAL, 1000) {};  
     void Draw();  
 };
 

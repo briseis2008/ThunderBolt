@@ -18,6 +18,8 @@ enum MissileType
     LASER,
 };
 
+class Plane;
+
 class Missile
 {
 protected:
@@ -45,7 +47,7 @@ public:
 
     virtual void Draw(void) = 0;
     virtual int CheckInWindow(void);
-    virtual void Move();
+    virtual void Move(double deltaT);
 
     void setType(MissileType type);
     MissileType getType();
@@ -63,22 +65,25 @@ public:
     
     void Launch(Vector2 position);
     void Move(Vector2 newPosition);
-
+    
+    friend class Plane;
 };
 
 class Bullet : public Missile {
-    double len;
 public:
+    double len;
+
     Bullet(const Color &color, int power, const Vector2 &position, 
-           const Vector2 &velocity, int shootMode, double l = 10.0) 
+           const Vector2 &velocity, int shootMode, double l = 4.0) 
          : Missile(BULLET, color, power, position, velocity, shootMode),
            len(l){};
     void Draw();
 };
 
 class Cannon : public Missile {
-    double radius;
 public:
+    double radius;
+
     Cannon(const Color &color, int power, const Vector2 &position, 
            const Vector2 &velocity, int shootMode, double r = 10.0) 
          : Missile(CANNON, color, power, position, velocity, shootMode), 
@@ -86,14 +91,14 @@ public:
     void Draw();
 };
 
-class Plane;
 
 class Laser : public Missile {
     int countDown;
-    double width;
     /* so that we could keep track of plane direction & position */
     Plane *plane;
 public:
+    double width;
+
     Laser (const Color &color, int power, const Vector2 &position, 
            const Vector2 &velocity, int shootMode, double w = 5.0) 
          : Missile(LASER, color, power, position, velocity, shootMode), 
@@ -101,7 +106,7 @@ public:
     void Draw();
     int CheckInWindow();
     void setPlane(Plane *plane);
-    void Move();
+    void Move(double deltaT);
 };
 
 /* allocate and create a new missile according to "Missile *missile" */

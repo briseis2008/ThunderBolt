@@ -28,6 +28,9 @@
 		124411FF1836F33B00DA388F /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F61836F33B00DA388F /* color.cpp */; };
 		124412001836F33B00DA388F /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F91836F33B00DA388F /* global.cpp */; };
 		124412011836F33B00DA388F /* linked_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411FB1836F33B00DA388F /* linked_list.cpp */; };
+		124412E41836F80C00DA388F /* prize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124412DE1836F80C00DA388F /* prize.cpp */; };
+		124412E51836F80C00DA388F /* texture_loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124412E01836F80C00DA388F /* texture_loader.cpp */; };
+		124412E61836F80C00DA388F /* ThunderBolt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124412E21836F80C00DA388F /* ThunderBolt.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +83,12 @@
 		124411FA1836F33B00DA388F /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
 		124411FB1836F33B00DA388F /* linked_list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = linked_list.cpp; sourceTree = "<group>"; };
 		124411FC1836F33B00DA388F /* linked_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linked_list.h; sourceTree = "<group>"; };
+		124412DE1836F80C00DA388F /* prize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = prize.cpp; sourceTree = "<group>"; };
+		124412DF1836F80C00DA388F /* prize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prize.h; sourceTree = "<group>"; };
+		124412E01836F80C00DA388F /* texture_loader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture_loader.cpp; sourceTree = "<group>"; };
+		124412E11836F80C00DA388F /* texture_loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture_loader.h; sourceTree = "<group>"; };
+		124412E21836F80C00DA388F /* ThunderBolt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThunderBolt.cpp; sourceTree = "<group>"; };
+		124412E31836F80C00DA388F /* ThunderBolt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunderBolt.h; sourceTree = "<group>"; };
 		12F5E803182940D4009B4249 /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -148,6 +157,12 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
+				124412DE1836F80C00DA388F /* prize.cpp */,
+				124412DF1836F80C00DA388F /* prize.h */,
+				124412E01836F80C00DA388F /* texture_loader.cpp */,
+				124412E11836F80C00DA388F /* texture_loader.h */,
+				124412E21836F80C00DA388F /* ThunderBolt.cpp */,
+				124412E31836F80C00DA388F /* ThunderBolt.h */,
 				124411F61836F33B00DA388F /* color.cpp */,
 				124411F71836F33B00DA388F /* color.h */,
 				124411F81836F33B00DA388F /* debug.h */,
@@ -311,8 +326,11 @@
 				0BDD66A41823160A005D635D /* Plane.cpp in Sources */,
 				0BDD66AA182317D5005D635D /* missile.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
+				124412E51836F80C00DA388F /* texture_loader.cpp in Sources */,
 				0B774C37182187FB00FC094A /* yspng.cpp in Sources */,
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
+				124412E61836F80C00DA388F /* ThunderBolt.cpp in Sources */,
+				124412E41836F80C00DA388F /* prize.cpp in Sources */,
 				0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */,
 				0BDD66A9182317D5005D635D /* vector.cpp in Sources */,
 				124412011836F33B00DA388F /* linked_list.cpp in Sources */,

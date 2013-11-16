@@ -24,9 +24,10 @@ Plane::Plane()
     this->missile_reload = 0;
     this->laser = NULL;
     this->firing = 0;
+    this->life = 0;
 }
 
-Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state)
+Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state, int life)
 {
     this->plane_state = plane_state;
     this->size_x=50;
@@ -40,6 +41,7 @@ Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state)
     this->missile_reload = 0;
     this->laser = NULL;
     this->firing = 0;
+    this->life = life;
 }
 
 Plane::~Plane() {
@@ -57,29 +59,62 @@ void Plane::Move(double deltaT){
 
 int Plane::CheckHit(Missile *missile)
 {
-    /*
-	if(missile.getType() == BULLET){
-		if(missile.getPosition().x>=position.x && missile.getPosition().x<=position.x+size_x && missile.getPosition().y>=position.y-size_y && missile.getPosition().y-10<=position.y)
-			return 1;
-		else
-			return 0;
-	}
-	else if(missile.getType() == CANNON){
-		if(missile.getPosition().x+10>=position.x && missile.getPosition().x-10<=position.x+size_x && missile.getPosition().y+10>=position.y-size_y && missile.getPosition().y-10<=position.y)
-			return 1;
-		else
-			return 0;
-	}
-	else if(missile.getType() == LASER){
-		if(missile.getPosition().x+20>=position.x && missile.getPosition().x<=position.x+size_x && missile.getPosition().y>=position.y-size_y)
-			return 1;
-		else
-			return 0;
-	}else
-        */
-        return 0;
+    double dist;
+    switch (missile->getType()) {
+        /* for performance, treat bullet as a single point */
+        case BULLET:
+            dist = position.distance(missile->position);
+            if (dist <= size_x / 2) return 1;
+            break;
+            
+        case CANNON:
+            dist = position.distance(missile->position);
+            if (dist <= size_x / 2 + ((Cannon *)missile)->radius) return 1;            
+            break;
+            
+        case LASER:
+            double a = missile->direction.y;
+            double b = -missile->direction.x;
+            double c = missile->direction.x * missile->position.y 
+                     - missile->direction.y * missile->position.x;
+            /* distance from point to line */
+            dist = fabs(a * position.x + b * position.y + c)
+                 / sqrt(a * a + b * b);
+            if (dist <= size_x / 2 + ((Laser *)missile)->width) return 1;
+            break;
+    }
+    
+    return 0;
 }
 
+/* check hit with all missiles, return 1 if destroyed by missiles; 0 otherwise*/
+int Plane::CheckHit(MissileList &missiles) {
+    MissileNode *node = missiles.getFront();
+    while (node) {
+        if (CheckHit(node->dat)) {
+            life -= node->dat->power;
+            
+            if (node->dat->getType() != LASER) 
+                node = missiles.Delete(node);
+            else 
+                node = node->next;
+                        
+            if (life <= 0) return 1;
+        } else {
+            node = node->next;            
+        }
+    }
+    
+    return 0;
+}
+
+int Plane::CheckHit(Plane *plane) {
+    double dist;
+    dist = position.distance(plane->position);
+    if (dist <= size_x / 2 + plane->size_x / 2) return 1;
+    
+    return 0;
+}
 
 int Plane::getPlaneState(){
     return plane_state;
@@ -246,8 +281,16 @@ void Plane::PowerUp() {
     }
 }
 
+int Plane::CheckInWindow() {
+    if (position.x >= 0 && position.x < WINDOW_WID
+     && position.y >= 0 && position.y < WINDOW_HEI)
+        return 1;
+        
+    return 0;
+}
+
 Thunder::Thunder(const Vector2 &position, const Vector2 &direction) 
-               : Plane(position, direction, PLANE_NORMAL) {
+               : Plane(position, direction, PLANE_NORMAL, 1000) {
     life_num = 3;
 }
 
@@ -257,21 +300,27 @@ void Thunder::Move(double deltaT) {
 	{
 		position.x -= velocity;
 	}
-	else if(FsGetKeyState(FSKEY_D)!=0)
+	if(FsGetKeyState(FSKEY_D)!=0)
 	{
 		position.x += velocity;
 	}
-    else if(FsGetKeyState(FSKEY_S)!=0)
+    if(FsGetKeyState(FSKEY_S)!=0)
     {
         position.y += velocity;
     }
-    else if(FsGetKeyState(FSKEY_W)!=0){
+    if(FsGetKeyState(FSKEY_W)!=0){
         position.y -= velocity;
     }
+    
+    /* you wanna move thunder out of screen? NO WAY! Muahahahaha */
+    if (position.x < 0) position.x = 0;
+    if (position.x > WINDOW_WID) position.x = WINDOW_WID;
+    if (position.y < size_y / 2) position.y = size_y / 2;
+    if (position.y > WINDOW_HEI - size_y / 2) position.y = WINDOW_HEI - size_y / 2;
 }
 
 void Thunder::Draw(){
-    glColor3ub(255,0,0);
+    glColor3ubv(gRed.arr());
     glBegin(GL_POLYGON);
     glVertex2d(position.x,position.y - size_y/2);
     glVertex2d(position.x + size_x / 2, position.y + size_y/2);
@@ -281,14 +330,20 @@ void Thunder::Draw(){
 }
 
 void Enemy1::Draw() {
-    glColor3ub(255,0,0);
-    glBegin(GL_QUADS);
-    glVertex2d(position.x,position.y);
-    glVertex2d(position.x,position.y-50);
-    glVertex2d(position.x+50,position.y-50);
-    glVertex2d(position.x+50,position.y);
+    glColor3ub(200, 200, 200);
+    
+    glBegin(GL_POLYGON);
+    int i;
+    for(i=0; i<64; i++)
+    {
+        double angle=(double)i*PI/32.0;
+        double x=position.x + cos(angle)*size_x / 2;
+        double y=position.y + sin(angle)*size_x / 2;
+        glVertex2d(x,y);
+    }
+
     glEnd();
-}
+    }
 
 
 #ifdef PLANE_DEBUG
@@ -298,20 +353,28 @@ int main(void){
     
     MissileList missiles;
     Missile *sample[3];
-    sample[0] = new Bullet(gRed, 100, gZero, Vector2(0, -20), 1);
-    sample[1] = new Cannon(gGreen, 100, gZero, Vector2(0, -10), 1);
-    sample[2] = new Laser(gBlue, 100, gZero, Vector2(0, -1), 1);
+    sample[0] = new Bullet(gRed, 300, gZero, Vector2(0, -20), 1);
+    sample[1] = new Cannon(gGreen, 1000, gZero, Vector2(0, -10), 1);
+    sample[2] = new Laser(gBlue, 20, gZero, Vector2(0, -1), 1);
     
     Plane *plane;
     Thunder thunder(startPosition, startDirection);
     thunder.setVelocity(5);
-    thunder.setMissile(LASER, gBlue, 100, Vector2(0, -1), missiles);
+    thunder.setMissile(sample[0], missiles);
     plane = &thunder;
     
-    FsOpenWindow(0,0,800,600,1);
+    Plane *enemy;
+    Enemy1 enemy1(Vector2(200, 100), Vector2(0,1));
+    enemy = &enemy1;
+    
+    PlaneList enemies;
+    
+    FsOpenWindow(0,0,WINDOW_WID,WINDOW_HEI,1);
+    glClearColor(0.1, 0.1, 0.1, 1);
     
     bool running = true;
     int i = 0;
+    int j = 0;
     
     while(running)
     {
@@ -322,14 +385,21 @@ int main(void){
         int lb, mb, rb, mx, my;
         int mouse = FsGetMouseEvent(lb, mb, rb, mx, my);
 
+        if (j % 100 == 0) {
+            Plane *newP = new Enemy1(Vector2(0, 0), Vector2(1, 1));
+            newP->setVelocity(2.0);
+            enemies.InsertBack(newP);
+        }
+        j++;
+        
         if(FSKEY_ESC==key)
         {
             running=false;
             break;
         }
         if (FSMOUSEEVENT_RBUTTONDOWN == mouse) {
-            plane->setMissile(sample[i], missiles);
             i = (i+1) % 3;
+            plane->setMissile(sample[i], missiles);
         }
         
         plane->Shoot(mouse, missiles);
@@ -338,19 +408,47 @@ int main(void){
         plane->Move(1.0);
         plane->Draw();
         
+        enemy->Draw();
+        
         
         MissileNode *node;
         node = missiles.getFront();
         while(node) {
-            node->dat->Move();
-            node->dat->Draw();
+            node->dat->Move(1.0);
+            
             if (!node->dat->CheckInWindow()) {
                 node = missiles.Delete(node);
+            } else if (enemy->CheckHit(node->dat)) {
+                printf("Hit by missile!\t%p\t%p\n", node, node->dat);
+                /* only delete when not laser */
+                if (node->dat->getType() != LASER) node = missiles.Delete(node);
+                else node = node->next;
             } else {
                 node = node->next;
             }
         }
-        
+
+        PlaneNode *pNode;
+        pNode = enemies.getFront();
+        while(pNode) {
+            pNode->dat->Move(1.0);
+            
+            if (!pNode->dat->CheckInWindow()) {
+                pNode = enemies.Delete(pNode);
+            } else {
+                if (pNode->dat->CheckHit(missiles))
+                    pNode = enemies.Delete(pNode);
+                else
+                    pNode = pNode->next;
+            }
+        }
+
+        FOR_EACH(pNode, enemies) {
+            pNode->dat->Draw();
+        }
+        FOR_EACH(node, missiles) {
+            node->dat->Draw();
+        }
         
         
         FsSwapBuffers();

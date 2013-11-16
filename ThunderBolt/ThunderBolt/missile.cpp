@@ -73,9 +73,9 @@ int Missile::CheckInWindow(void)
     return state;
 }
 
-void Missile::Move()
+void Missile::Move(double deltaT)
 {
-    position += velocity;
+    position += velocity * deltaT;
 }
 
 MissileType Missile::getType(){
@@ -200,7 +200,33 @@ void Laser::Draw() {
 
 
         glEnd();
+        
+        /* Electricity effect */
+        glColor3ub(250, 250, 255);
+        glBegin(GL_LINE_STRIP);
+        
+        double randX = 0.0, randY = 0.0;
+        Vector2 temp(position);
+        Vector2 point;
+        Vector2 perpendicular(direction.y, -direction.x);
+        /* generate electricity until outside screen */
+        while (temp.x > 0 && temp.x < WINDOW_WID 
+            && temp.y > 0 && temp.y < WINDOW_HEI) {
+            randX = rand()%(2*(int)width+8) - width - 4;
+            randY = rand() % 80;
+            
+            point = temp + perpendicular * randX; 
+            glVertex2d(point.x, point.y);
+            temp += direction * randY;
+            
+            /* random break */
+            if (rand()%5 == 0) {
+                glEnd();
+                glBegin(GL_LINE_STRIP);
+            }
+        }
 
+        glEnd();
     }
 }
 
@@ -213,7 +239,7 @@ int Laser::CheckInWindow() {
     return state;
 }
 
-void Laser::Move() {
+void Laser::Move(double deltaT) {
     /* generally should not happen */
     if (!plane) return;
     
@@ -262,6 +288,7 @@ int main(void)
     int firing = 0;
 
     FsOpenWindow(0,0,600, 800,1);
+    glClearColor(0, 0, 0, 1);
 
     bool running = true;
 
@@ -278,17 +305,17 @@ int main(void)
         {
             running=false;
         }
-        else if(FSKEY_UP==key)
+        if(FsGetKeyState(FSKEY_UP))
         {
-            bulletV.rotate(0.1);
-            cannonV.rotate(0.1);
-            laserV.rotate(0.1);
+            bulletV.rotate(0.05);
+            cannonV.rotate(0.05);
+            laserV.rotate(0.05);
         }
-        else if(FSKEY_DOWN==key)
+        if(FsGetKeyState(FSKEY_DOWN))
         {
-            bulletV.rotate(-0.1);
-            cannonV.rotate(-0.1);
-            laserV.rotate(-0.1);
+            bulletV.rotate(-0.05);
+            cannonV.rotate(-0.05);
+            laserV.rotate(-0.05);
         }
         
         if(FSMOUSEEVENT_LBUTTONDOWN == mouse) {
@@ -323,7 +350,7 @@ int main(void)
         MissileNode *node;
         node = missiles.getFront();
         while(node) {
-            node->dat->Move();
+            node->dat->Move(1.0);
             node->dat->Draw();
             if (!node->dat->CheckInWindow()) {
                 node = missiles.Delete(node);
