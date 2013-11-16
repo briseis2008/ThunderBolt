@@ -11,6 +11,7 @@
 #include "debug.h"
 
 
+/* default constructor */
 Plane::Plane()
 {
     this->plane_state = PLANE_NORMAL;
@@ -25,15 +26,18 @@ Plane::Plane()
     this->laser = NULL;
     this->firing = 0;
     this->life = 0;
+    this->default_reload_speed = 10;
 }
 
-Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state, int life)
+Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state,
+             int size_x, int size_y, int life, int default_reload_speed)
 {
     this->plane_state = plane_state;
-    this->size_x=50;
-    this->size_y=50;
+    this->size_x = size_x;
+    this->size_y = size_y;
     this->position = position;
     this->direction = direction;
+    /* normalize direction vector so that we always have unit vector */
     this->direction.normalize();
     this->velocity = 0.0;
     this->missile = NULL;
@@ -42,9 +46,10 @@ Plane::Plane(const Vector2 &position, const Vector2 &direction, int plane_state,
     this->laser = NULL;
     this->firing = 0;
     this->life = life;
+    this->default_reload_speed = default_reload_speed;
 }
 
-/* we are nice people, free memory before we go */
+/* we are nice people, so free memory before we go */
 Plane::~Plane() {
     if (missile) {
         delete missile;
@@ -52,25 +57,27 @@ Plane::~Plane() {
 }
 
 
-/* move plane accordingly */
+/* move plane according to current speed */
 void Plane::Move(double deltaT){
     /* deltaS = v * deltaT */
-    position += direction * velocity * deltaT;
+    position += (direction * velocity) * deltaT;
 }
 
 
-/* check if plane is hit by missile */
+/* check if plane is hit by a single missile (considering different types) */
 int Plane::CheckHit(Missile *missile)
 {
     double dist;
     switch (missile->getType()) {
         /* for performance, treat bullet as a single point */
         case BULLET:
+            /* distance between circle and point */
             dist = position.distance(missile->position);
             if (dist <= size_x / 2) return 1;
             break;
             
         case CANNON:
+            /* distance between two circles */
             dist = position.distance(missile->position);
             if (dist <= size_x / 2 + ((Cannon *)missile)->radius) return 1;            
             break;
@@ -81,62 +88,96 @@ int Plane::CheckHit(Missile *missile)
             double b = -missile->direction.x;
             double c = missile->direction.x * missile->position.y 
                      - missile->direction.y * missile->position.x;
-            /* equation: distance from point to line */
+            /* equation: distance from circle to line */
             dist = fabs(a * position.x + b * position.y + c)
                  / sqrt(a * a + b * b);
             if (dist <= size_x / 2 + ((Laser *)missile)->width) return 1;
             break;
     }
     
+    /* if we get here, then no hit is detected */
     return 0;
 }
 
-/* check hit with all missiles, return 1 if destroyed by missiles; 0 otherwise*/
+/* check hit with all missiles in a missile list (linked list), 
+ * return 1 if finally destroyed by missiles; 0 otherwise
+ */
 int Plane::CheckHit(MissileList &missiles) {
+    /* get the head of list */
     MissileNode *node = missiles.getFront();
+    
+    /* traverse the missiles in the list and check for hit */
     while (node) {
+        /* typeof(node->dat) is Missile*  */
         if (CheckHit(node->dat)) {
+            /* if hit by a missile, we get hurt :( */
             life -= node->dat->power;
             
-            /* do not delete missile */
+            /* the missile will disappear after collision, unless it's laser */
             if (node->dat->getType() != LASER) 
                 node = missiles.Delete(node);
             else 
                 node = node->next;
-                        
+            
+            /* check for early termination, return 1 if destroyed */
             if (life <= 0) return 1;
         } else {
             node = node->next;            
         }
     }
     
+    /* if we get here, then plane is not destroyed */
     return 0;
 }
 
+/* check hit with another plane */
 int Plane::CheckHit(Plane *plane) {
     double dist;
+    /* basic circle to circle collision detection */
     dist = position.distance(plane->position);
     if (dist <= size_x / 2 + plane->size_x / 2) return 1;
     
     return 0;
 }
 
+/* getters and setters */
 int Plane::getPlaneState(){
     return plane_state;
 }
-
 void Plane::setPlaneState(int state) {
     this->plane_state = state;
 }
-
 void Plane::setVelocity(double velocity) {
     this->velocity = velocity;
 }
 
+/* Cancel current laser emitting, delete it from missile list */
+void Plane::ReloadLaser(MissileList &missiles) {
+    /* only do this while we are actually firing laser */
+    if (laser) {
+        /* delete it from missile list */
+        missiles.Delete(laser);
+        laser = NULL;
+        /* get ready for next fire */
+        missile_reload = 0;
+    }
+}
 
+/* Missile* missile member variable in Plane class is used to record what kind
+ * of missile will the plane launch while firing.
+ * This function is used to modify that variable.
+ * @param missiles This variable is needed, because: if this function is called
+ *                 while the plane is shooting laser, we want to update our
+ *                 weapon and delete the current laser. Otherwise, imagine this
+ *                 situation: the user is holding mouse button and shooting 
+ *                 laser, meanwhile he switches weapon to bullet without loosing
+ *                 mouse button, the bullets will be fired correctly however the
+ *                 laser will never disappear since no one destroy it
+ */
 void Plane::setMissile(MissileType type, const Color &color, int power,
                        const Vector2 &velocity, MissileList &missiles) {
     Missile *newMissile = NULL;
+    /* generate one new missile according to type and other parameters */
     switch (type) {
         case BULLET:
             newMissile = new Bullet(color, power, gZero, velocity, 1);
@@ -152,39 +193,53 @@ void Plane::setMissile(MissileType type, const Color &color, int power,
     }
     assert(newMissile);
     
+    /* if this plane is equiped with a missile before, free it */
     if (missile) {
         delete missile;
     }
     
+    /* equip with new missile */
     missile = newMissile;
+    /* reset missile level, reload time and reload speed */
     missile_level = 1;
     missile_reload = 0;
+    reload_speed = default_reload_speed;
     
-    /* make sure we cancel current laser and reload */
+    /* make sure we cancel current laser if there is any */
     ReloadLaser(missiles);
 }
 
-void Plane::setMissile(Missile *missile, MissileList &missiles) {
+/* equip current plane with a missile
+ * @param missile The missile prototype we are going to copy from
+ * @param missiles The missile list, we need this parameter for similar reason.
+ *                 See description above for more details.
+ */
+void Plane::setMissile(const Missile *missile, MissileList &missiles) {
+    /* copy a missile from prototype */
     Missile *newMissile = CopyMissile(missile);
     
+    /* free previously equipped missile and equip with new one */
     if (this->missile) {
         delete this->missile;
     }
-    this->missile = newMissile;
     
-    missile = newMissile;
+    this->missile = newMissile;
+    /* reset missile level, reload time and reload speed */
     missile_level = 1;
     missile_reload = 0;
+    reload_speed = default_reload_speed;
     
     /* make sure we cancel current laser and reload */
     ReloadLaser(missiles);   
 }
 
 
+/* missile initial position is at the front edge of plane */
 Vector2 Plane::getMissilePos() {
     return position + direction * (size_y / 2);
 }
 
+/* parse user mouse action */
 void Plane::ParseAction(int mouse) {
     if (FSMOUSEEVENT_LBUTTONDOWN == mouse) {
         firing = 1;
@@ -193,14 +248,21 @@ void Plane::ParseAction(int mouse) {
     }
 }
 
-void Plane::ReloadLaser(MissileList &missiles) {
-    if (laser) {
-        missiles.Delete(laser);
-        laser = NULL;
-        missile_reload = 0;
-    }
-}
-
+/**
+ * @brief perform shooting action according to user input
+ * 
+ * 1) if the plane is firing: we fire a missile according to the missile we are
+ *    equipped with. We make one new missile, set up position and direction,
+ *    then insert it into missile linked list. If we are firing bullet or cannon
+ *    , plane will have no control over that missile later on, and the missile 
+ *    will move by itself; if we are emitting laser, we need to keep track of
+ *    that laser beam so that we could easily cancel it if needed.
+ * 2) if the plane stops firing: we need to cancel current laser if we are 
+ *    actually firing one
+ *
+ * @param action User input, currently mouse input
+ * @param missiles the missile list we are going to add our missile in
+ */
 void Plane::Shoot(int action, MissileList &missiles){
     ParseAction(action);
     
@@ -210,82 +272,174 @@ void Plane::Shoot(int action, MissileList &missiles){
 
         Vector2 shootPosition = getMissilePos();
     
+        /* create a new missile according to our armory */
         Missile *newMissile = CopyMissile(missile);
         newMissile->setPosition(shootPosition);
+        /* missile gets the same direction as plane */
         newMissile->setDirection(direction);
         
+        /* add this new fired missile into linked list */
         MissileNode *newNode = missiles.InsertBack(newMissile);
+        /* right after shoot, refresh our reload time */
         switch(newMissile->getType()) {
             case BULLET:
-                missile_reload = 10;
+                missile_reload = 100;
                 break;
                 
             case CANNON:
-                missile_reload = 20;
+                missile_reload = 300;
                 break;
                 
             case LASER:
+                /* in case it's laser, we also need to record this missile node
+                   so that we could cancel it by ourselves in future */
                 laser = newNode;
+                /* also record this plane in that laser. Because Laser->Move()
+                   will actually query current plane poisition & direction */
                 ((Laser *)newMissile)->setPlane(this);
-                missile_reload = 20;
+                missile_reload = 1;
                 break;
         }
+        
+        /* The following part is a temporary work-around to get multi-direction
+           bullets. It's here for demo purpose ONLY. We should come up with
+           some structured code that emits bullets according to current
+           missile_level */
+        /*********** ATTENTION: Below is a temporary hack ONLY! ***************/
+        {
+            if (newMissile->getType() == BULLET) {
+                /* just generate 4 more bullets, and shoot them! */
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(5, 0));
+                newMissile->setDirection(direction);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-5, 0));
+                newMissile->setDirection(direction);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(10, 0));
+                newMissile->setDirection(direction);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-10, 0));
+                newMissile->setDirection(direction);
+                missiles.InsertBack(newMissile);
+    
+                /* 5 more bullets in right upper direction, the key is to rotate
+                   direction by some degree alpha */
+                Vector2 newDirection = direction;
+                newDirection.rotate(0.5);
+                
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(5, 5));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(10, 10));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(15, 15));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(20, 20));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(25, 25));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+                
+                
+                /* 5 more bullets in left upper direction, the key is to rotate
+                   direction back by 2*alpha */
+                newDirection.rotate(-1);
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-5, 5));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-10, 10));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-15, 15));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-20, 20));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+                newMissile = CopyMissile(missile);
+                newMissile->setPosition(shootPosition+ Vector2(-25, 25));
+                newMissile->setDirection(newDirection);
+                missiles.InsertBack(newMissile);
+    
+            }
+        }
+        /*********** ATTENTION: Above is a temporary hack ONLY! ***************/
+        
     } else {
         ReloadLaser(missiles);
     }
 
 
-    /*
-    if(key == FSKEY_J){
-        missile.setType(CANNON);
-        missile.setColor(255);
-        missile.setPosition(shoot_position);
-        missile.setVelocity(velocity);
-        
-        missile.Launch(shoot_position);
-        printf("%d\n", missile.getState());
-        
-    }
-    if(key == FSKEY_K) {
-        missile.setType(BULLET);
-        
-        missile.setColor(255);
-        missile.setPosition(shoot_position);
-        missile.setVelocity(velocity);
-        
-        missile.Launch(shoot_position);
-        
-    }
-    
-    
-    
-    if(key == FSKEY_L){
-        missile.setType(LASER);
-        
-        missile.setColor(255);
-        missile.setPosition(shoot_position);
-        
-        missile.Launch(shoot_position);
-        missile.Draw();
-    }
-
-    */
     
 }
 
 
+/* Cool down the weapon, decrease the reload time count down. Such that, when
+ * realod == 0, we are ready for firing next missile. This function should be
+ * called in each game iteration.
+ * reload_speed will affect how fast the reloading process is.
+ */
 void Plane::CoolDown(){
+    /* the weapon is already reloaded */
     if (missile_reload <= 0) return;
+    /* laser is firing with out interval */
     if (missile->getType() == LASER) return;
-    missile_reload--;
+    
+    /* reload could be control */
+    missile_reload -= reload_speed;
 }
 
-void Plane::PowerUp() {
-    if (missile_level <= MAX_MISSILE_LEVEL) {
+/* upgrade the weapon */
+void Plane::PowerUp(MissileList &missiles) {
+    if (missile_level < MAX_MISSILE_LEVEL) {
         missile_level++;
+        switch (missile->getType()) {
+            /* upgrade for bullet: no actual change to missile itself? */
+            case BULLET:
+                
+                break;
+                
+            /* upgrade for cannon: faster speed? */
+            case CANNON:
+                reload_speed += 5;
+                break;
+                
+            /* upgrade for laser: wider range? */
+            case LASER:
+                ReloadLaser(missiles);
+                ((Laser *)missile)->width += 2;
+        }
     }
 }
 
+/* check if the plane is still in window */
 int Plane::CheckInWindow() {
     if (position.x >= 0 && position.x < WINDOW_WID
      && position.y >= 0 && position.y < WINDOW_HEI)
@@ -294,12 +448,17 @@ int Plane::CheckInWindow() {
     return 0;
 }
 
+
+/* constructor for Thunder class */
 Thunder::Thunder(const Vector2 &position, const Vector2 &direction) 
-               : Plane(position, direction, PLANE_NORMAL, 1000) {
+               : Plane(position, direction, PLANE_NORMAL, 50, 50, 1000, 15) {
     life_num = 3;
 }
 
 
+
+/* Thunder movement simulation. Currently it's not driven by Newton Equation.
+   Whenever user press control keys, we move the plane by one step. */
 void Thunder::Move(double deltaT) {
     if(FsGetKeyState(FSKEY_A)!=0)
 	{
@@ -324,6 +483,7 @@ void Thunder::Move(double deltaT) {
     if (position.y > WINDOW_HEI - size_y / 2) position.y = WINDOW_HEI - size_y / 2;
 }
 
+/* Draw the thunder plane */
 void Thunder::Draw(){
     glColor3ubv(gRed.arr());
     glBegin(GL_POLYGON);
@@ -356,23 +516,37 @@ int main(void){
     Vector2 startPosition(300, 280);
     Vector2 startDirection(0, -1);
     
+    /* This list is used to store all user emmitted active missiles */
     MissileList missiles;
-    Missile *sample[3];
-    sample[0] = new Bullet(gRed, 300, gZero, Vector2(0, -20), 1);
-    sample[1] = new Cannon(gGreen, 1000, gZero, Vector2(0, -10), 1);
-    sample[2] = new Laser(gBlue, 20, gZero, Vector2(0, -1), 1);
+    /* This list is used to store all moving enemies */
+    PlaneList enemies;
     
-    Plane *plane;
+    /* These are three missile prototype that thunder might be equipped with,
+       In the future, these should be moved inside Thunder's constructor, and
+       this array will be Thunder's member variable. So that we could easily 
+       switch Thunder's weapon between each other */
+    Missile *weapon[3];
+    weapon[0] = new Bullet(gRed, 300, gZero, Vector2(0, -20), 1);
+    weapon[1] = new Cannon(gGreen, 1000, gZero, Vector2(0, -10), 1);
+    weapon[2] = new Laser(gBlue, 20, gZero, Vector2(0, -1), 1);
+    
+    /* Create the thunder */
     Thunder thunder(startPosition, startDirection);
     thunder.setVelocity(5);
-    thunder.setMissile(sample[0], missiles);
+    thunder.setMissile(weapon[0], missiles);
+
+    Plane *plane;
     plane = &thunder;
     
-    Plane *enemy;
+    /* create the stupid enemy who stands there forever. This is for testing
+       purpose and this enemy will check hit with bullets however never be
+       destroyed 
+       Yeah Baby, I am The White Walker!!! */
     Enemy1 enemy1(Vector2(200, 100), Vector2(0,1));
+
+    Plane *enemy;
     enemy = &enemy1;
     
-    PlaneList enemies;
     
     FsOpenWindow(0,0,WINDOW_WID,WINDOW_HEI,1);
     glClearColor(0.1, 0.1, 0.1, 1);
@@ -390,6 +564,8 @@ int main(void){
         int lb, mb, rb, mx, my;
         int mouse = FsGetMouseEvent(lb, mb, rb, mx, my);
 
+        /* generate a moving enemy once in a while, it starts from top left
+           corner, and is moving towards right-bottom */
         if (j % 100 == 0) {
             Plane *newP = new Enemy1(Vector2(0, 0), Vector2(1, 1));
             newP->setVelocity(2.0);
@@ -401,21 +577,30 @@ int main(void){
         {
             running=false;
             break;
+        } else if (FSKEY_UP == key) {
+            /* UP for power up */
+            plane->PowerUp(missiles);
         }
         if (FSMOUSEEVENT_RBUTTONDOWN == mouse) {
+            /* Right click for switch between 3 types of weapons */
             i = (i+1) % 3;
-            plane->setMissile(sample[i], missiles);
+            plane->setMissile(weapon[i], missiles);
         }
         
+        /* Thunder: shoot and cool down weapon. */
         plane->Shoot(mouse, missiles);
         plane->CoolDown();
         
+        /* Thunder: move and draw. */
         plane->Move(1.0);
         plane->Draw();
         
+        /* Draw that Immortal guy */
         enemy->Draw();
         
         
+        /* traverse the missiles list, move missile, and check hit with that 
+           immortal enemy, just for test CheckHit function */
         MissileNode *node;
         node = missiles.getFront();
         while(node) {
@@ -433,6 +618,8 @@ int main(void){
             }
         }
 
+        /* traverse the moving enemy list, check hit with all missiles for each
+           enemy, delete it if destroyed */
         PlaneNode *pNode;
         pNode = enemies.getFront();
         while(pNode) {
@@ -448,6 +635,7 @@ int main(void){
             }
         }
 
+        /* traverse enemies and missiles, draw them */
         FOR_EACH(pNode, enemies) {
             pNode->dat->Draw();
         }

@@ -30,35 +30,6 @@ Missile::Missile()
     this->shootMode = 0;
 }
 
-/*
-Missile::Missile(MissileType type, int color, int power, int shootMode, Vector2 position)
-{
-    state = 0;
-    this->type = type;
-    this->color = color;
-    this->red = (color>>16)&0xff;
-    this->green = (color>>8)&0xff;
-    this->blue = color&0xff;
-    this->power = power;
-    this->shootMode = shootMode;
-    this->position = position;
-   
-    
-}
-
-Missile::Missile(MissileType type, int color, Vector2 position, Vector2 velocity)
-{
-    state = 0;
-    this->type = type;
-    this->color = color;
-    this->red = (color>>16)&0xff;
-    this->green = (color>>8)&0xff;
-    this->blue = color&0xff;
-    this->position = position;
-    this->velocity = velocity;
-}
-*/
-
 int Missile::CheckInWindow(void)
 {
     if (position.y < 0 || position.y >= WINDOW_HEI ||
@@ -78,7 +49,7 @@ void Missile::Move(double deltaT)
     position += velocity * deltaT;
 }
 
-MissileType Missile::getType(){
+MissileType Missile::getType() const{
     return type;
 }
 
@@ -94,7 +65,7 @@ void Missile::setPosition(const Vector2 &position){
     this->position = position;
 }
 
-Vector2 Missile::getPosition()
+Vector2 Missile::getPosition() const
 {
     return position;
 }
@@ -113,19 +84,10 @@ void Missile::setState(int state){
     this->state =  state;
 }
 
-int Missile::getState(){
+int Missile::getState() const{
     return state;
 }
 
-
-void Missile::Launch(Vector2 position)
-{
-    if(state == 0)
-    {
-        state = 1;
-        this->position = position;
-    }
-}
 
 void Missile::Move(Vector2 newPosition)
 {
@@ -209,9 +171,10 @@ void Laser::Draw() {
         Vector2 temp(position);
         Vector2 point;
         Vector2 perpendicular(direction.y, -direction.x);
-        /* generate electricity until outside screen */
+        /* generate electricity until reaches edge of screen */
         while (temp.x > 0 && temp.x < WINDOW_WID 
             && temp.y > 0 && temp.y < WINDOW_HEI) {
+                
             randX = rand()%(2*(int)width+8) - width - 4;
             randY = rand() % 80;
             
@@ -247,7 +210,8 @@ void Laser::Move(double deltaT) {
     position = plane->getMissilePos();
 }
 
-Missile *CopyMissile(Missile *missile) {
+/* allocate memory for a new missile, bit-wise copy from a passed-in missile */
+Missile *CopyMissile(const Missile *missile) {
     if (missile == NULL) return NULL;
     
     Missile *newMissile;
