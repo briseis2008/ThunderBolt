@@ -25,6 +25,9 @@
 		0BDD66A41823160A005D635D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A21823160A005D635D /* Plane.cpp */; };
 		0BDD66A9182317D5005D635D /* vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A5182317D5005D635D /* vector.cpp */; };
 		0BDD66AA182317D5005D635D /* missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A8182317D5005D635D /* missile.cpp */; };
+		124411FF1836F33B00DA388F /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F61836F33B00DA388F /* color.cpp */; };
+		124412001836F33B00DA388F /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F91836F33B00DA388F /* global.cpp */; };
+		124412011836F33B00DA388F /* linked_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411FB1836F33B00DA388F /* linked_list.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +73,13 @@
 		0BDD66A6182317D5005D635D /* missile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = missile.h; sourceTree = "<group>"; };
 		0BDD66A7182317D5005D635D /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		0BDD66A8182317D5005D635D /* missile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = missile.cpp; sourceTree = "<group>"; };
+		124411F61836F33B00DA388F /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color.cpp; sourceTree = "<group>"; };
+		124411F71836F33B00DA388F /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
+		124411F81836F33B00DA388F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		124411F91836F33B00DA388F /* global.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
+		124411FA1836F33B00DA388F /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
+		124411FB1836F33B00DA388F /* linked_list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = linked_list.cpp; sourceTree = "<group>"; };
+		124411FC1836F33B00DA388F /* linked_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linked_list.h; sourceTree = "<group>"; };
 		12F5E803182940D4009B4249 /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -138,6 +148,13 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
+				124411F61836F33B00DA388F /* color.cpp */,
+				124411F71836F33B00DA388F /* color.h */,
+				124411F81836F33B00DA388F /* debug.h */,
+				124411F91836F33B00DA388F /* global.cpp */,
+				124411FA1836F33B00DA388F /* global.h */,
+				124411FB1836F33B00DA388F /* linked_list.cpp */,
+				124411FC1836F33B00DA388F /* linked_list.h */,
 				0BDD66A7182317D5005D635D /* vector.h */,
 				0BDD66A5182317D5005D635D /* vector.cpp */,
 				0BDD66A6182317D5005D635D /* missile.h */,
@@ -288,7 +305,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				124411FF1836F33B00DA388F /* color.cpp in Sources */,
 				0B774C36182187FB00FC094A /* ysglfontdata.c in Sources */,
+				124412001836F33B00DA388F /* global.cpp in Sources */,
 				0BDD66A41823160A005D635D /* Plane.cpp in Sources */,
 				0BDD66AA182317D5005D635D /* missile.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
@@ -296,6 +315,7 @@
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
 				0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */,
 				0BDD66A9182317D5005D635D /* vector.cpp in Sources */,
+				124412011836F33B00DA388F /* linked_list.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
