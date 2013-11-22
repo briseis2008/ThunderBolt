@@ -6,6 +6,7 @@
 //#define MISSILE_DEBUG
 //#define PRIZE_DEBUG
 //#define TEXTURE_LOADER_DEBUG
+//#define EXPLOSION_DEBUG
 
 #include <stdio.h>
 

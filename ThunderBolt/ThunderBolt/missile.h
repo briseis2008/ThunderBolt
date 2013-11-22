@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
 #include "vector.h"
@@ -42,10 +43,6 @@ public:
             const Vector2 &position, const Vector2 &velocity, int shootMode);
     virtual ~Missile() {};
 
-    virtual void Draw(void) = 0;
-    virtual int CheckInWindow(void);
-    virtual void Move(double deltaT);
-
     void setType(MissileType type);
     MissileType getType() const;
     
@@ -60,8 +57,11 @@ public:
     void setState(int state);
     int getState() const;
     
-    void Move(Vector2 newPosition);
-    
+
+    virtual void Draw(void) = 0;
+    virtual int CheckInWindow(void);
+    virtual void Move(double deltaT);
+        
     friend class Plane;
 };
 
@@ -89,7 +89,6 @@ public:
 
 
 class Laser : public Missile {
-    int countDown;
     /* so that we could keep track of plane direction & position */
     Plane *plane;
 public:
@@ -97,8 +96,7 @@ public:
 
     Laser (const Color &color, int power, const Vector2 &position, 
            const Vector2 &velocity, int shootMode, double w = 5.0) 
-         : Missile(LASER, color, power, position, velocity, shootMode), 
-           countDown(20), width(w) {};
+         : Missile(LASER, color, power, position, velocity, shootMode), width(w) {};
     void Draw();
     int CheckInWindow();
     void setPlane(Plane *plane);

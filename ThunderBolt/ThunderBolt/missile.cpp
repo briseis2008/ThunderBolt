@@ -30,25 +30,8 @@ Missile::Missile()
     this->shootMode = 0;
 }
 
-int Missile::CheckInWindow(void)
-{
-    if (position.y < 0 || position.y >= WINDOW_HEI ||
-        position.x < 0 || position.x >= WINDOW_WID)
-    {
-        state = 0;
-    }
-    else
-    {
-        state = 1;
-    }
-    return state;
-}
 
-void Missile::Move(double deltaT)
-{
-    position += velocity * deltaT;
-}
-
+/* setters and getters */
 MissileType Missile::getType() const{
     return type;
 }
@@ -89,11 +72,27 @@ int Missile::getState() const{
 }
 
 
-void Missile::Move(Vector2 newPosition)
+/* check if current missile is still active.
+ * @return 1 if in window, 0 otherwise */
+int Missile::CheckInWindow(void)
 {
-    position = newPosition;
+    if (position.y < 0 || position.y >= WINDOW_HEI ||
+        position.x < 0 || position.x >= WINDOW_WID)
+    {
+        state = 0;
+    }
+    else
+    {
+        state = 1;
+    }
+    return state;
 }
 
+/* move the missile according to s = v * t */
+void Missile::Move(double deltaT)
+{
+    position += velocity * deltaT;
+}
 
 
 void Bullet::Draw() {
@@ -127,6 +126,8 @@ void Cannon::Draw() {
 }
 
 
+/* record which plane fired this laser, so that we could update laser position
+ * according to latest plane location */
 void Laser::setPlane(Plane *plane) {
     this->plane = plane;
 }
@@ -163,7 +164,7 @@ void Laser::Draw() {
 
         glEnd();
         
-        /* Electricity effect */
+        /* Electricity effect, consists of random poly lines  */
         glColor3ub(250, 250, 255);
         glBegin(GL_LINE_STRIP);
         
@@ -194,12 +195,9 @@ void Laser::Draw() {
 }
 
 
+/* the way we check if laser is alive. Actually it is always alive. */
 int Laser::CheckInWindow() {
-    if(countDown <= 0)
-        state = 0;
-    else 
-        state = 1;
-    return state;
+    return 1;
 }
 
 void Laser::Move(double deltaT) {
@@ -251,6 +249,7 @@ int main(void)
     int bulletReload = 0;
     int firing = 0;
 
+    srand(time(NULL));
     FsOpenWindow(0,0,600, 800,1);
     glClearColor(0, 0, 0, 1);
 

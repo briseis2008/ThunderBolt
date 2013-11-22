@@ -25,6 +25,10 @@
 		0BDD66A41823160A005D635D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A21823160A005D635D /* Plane.cpp */; };
 		0BDD66A9182317D5005D635D /* vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A5182317D5005D635D /* vector.cpp */; };
 		0BDD66AA182317D5005D635D /* missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A8182317D5005D635D /* missile.cpp */; };
+		122F56441840144A00BF847D /* boss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 122F563C1840144A00BF847D /* boss.cpp */; };
+		122F56451840144A00BF847D /* enemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 122F563E1840144A00BF847D /* enemy.cpp */; };
+		122F56461840144A00BF847D /* explosion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 122F56401840144A00BF847D /* explosion.cpp */; };
+		122F56471840144A00BF847D /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 122F56421840144A00BF847D /* player.cpp */; };
 		124411FF1836F33B00DA388F /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F61836F33B00DA388F /* color.cpp */; };
 		124412001836F33B00DA388F /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411F91836F33B00DA388F /* global.cpp */; };
 		124412011836F33B00DA388F /* linked_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 124411FB1836F33B00DA388F /* linked_list.cpp */; };
@@ -76,6 +80,14 @@
 		0BDD66A6182317D5005D635D /* missile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = missile.h; sourceTree = "<group>"; };
 		0BDD66A7182317D5005D635D /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		0BDD66A8182317D5005D635D /* missile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = missile.cpp; sourceTree = "<group>"; };
+		122F563C1840144A00BF847D /* boss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = boss.cpp; sourceTree = "<group>"; };
+		122F563D1840144A00BF847D /* boss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boss.h; sourceTree = "<group>"; };
+		122F563E1840144A00BF847D /* enemy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enemy.cpp; sourceTree = "<group>"; };
+		122F563F1840144A00BF847D /* enemy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enemy.h; sourceTree = "<group>"; };
+		122F56401840144A00BF847D /* explosion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = explosion.cpp; sourceTree = "<group>"; };
+		122F56411840144A00BF847D /* explosion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = explosion.h; sourceTree = "<group>"; };
+		122F56421840144A00BF847D /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
+		122F56431840144A00BF847D /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
 		124411F61836F33B00DA388F /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color.cpp; sourceTree = "<group>"; };
 		124411F71836F33B00DA388F /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
 		124411F81836F33B00DA388F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
@@ -157,6 +169,14 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
+				122F563C1840144A00BF847D /* boss.cpp */,
+				122F563D1840144A00BF847D /* boss.h */,
+				122F563E1840144A00BF847D /* enemy.cpp */,
+				122F563F1840144A00BF847D /* enemy.h */,
+				122F56401840144A00BF847D /* explosion.cpp */,
+				122F56411840144A00BF847D /* explosion.h */,
+				122F56421840144A00BF847D /* player.cpp */,
+				122F56431840144A00BF847D /* player.h */,
 				124412DE1836F80C00DA388F /* prize.cpp */,
 				124412DF1836F80C00DA388F /* prize.h */,
 				124412E01836F80C00DA388F /* texture_loader.cpp */,
@@ -322,14 +342,18 @@
 			files = (
 				124411FF1836F33B00DA388F /* color.cpp in Sources */,
 				0B774C36182187FB00FC094A /* ysglfontdata.c in Sources */,
+				122F56471840144A00BF847D /* player.cpp in Sources */,
 				124412001836F33B00DA388F /* global.cpp in Sources */,
 				0BDD66A41823160A005D635D /* Plane.cpp in Sources */,
 				0BDD66AA182317D5005D635D /* missile.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
 				124412E51836F80C00DA388F /* texture_loader.cpp in Sources */,
 				0B774C37182187FB00FC094A /* yspng.cpp in Sources */,
+				122F56451840144A00BF847D /* enemy.cpp in Sources */,
+				122F56441840144A00BF847D /* boss.cpp in Sources */,
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
 				124412E61836F80C00DA388F /* ThunderBolt.cpp in Sources */,
+				122F56461840144A00BF847D /* explosion.cpp in Sources */,
 				124412E41836F80C00DA388F /* prize.cpp in Sources */,
 				0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */,
 				0BDD66A9182317D5005D635D /* vector.cpp in Sources */,
