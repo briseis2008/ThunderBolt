@@ -9,6 +9,7 @@ class Thunder : public Plane {
 protected:
     /* how many lives do we have now. How I wish it's infinite! */
     int life_num;
+    int missileType;
     
     /* These are three missile prototype that thunder might be equipped with,
        So that we could easily switch Thunder's weapon between each other */
@@ -24,7 +25,7 @@ public:
     virtual void Draw();
     virtual void Move(double deltaT);
     virtual void Shoot(int action, MissileList &missiles);
-    
+    void upgrade(int upLevel, MissileList &missiles);
     void PowerUp(MissileList &missiles);
     void SwitchWeapon(MissileType type, MissileList &missiles);
 

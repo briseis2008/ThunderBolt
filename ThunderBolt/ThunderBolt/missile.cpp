@@ -64,7 +64,7 @@ void Missile::setDirection(const Vector2 &direction) {
 }
 
 void Missile::setState(int state){
-    this->state =  state;
+    this->state = state;
 }
 
 int Missile::getState() const{

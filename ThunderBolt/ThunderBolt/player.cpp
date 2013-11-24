@@ -5,11 +5,13 @@
 Thunder::Thunder(const Vector2 &position, const Vector2 &direction) 
                : Plane(position, direction, PLANE_NORMAL, 50, 50, 1000, 15) {
     life_num = 3;
+    missileType = 0;
     /* three thunder weapon prototypes */
     weapon[0] = new Bullet(gRed, 300, gZero, Vector2(0, -20), 1);
     weapon[1] = new Cannon(gGreen, 1000, gZero, Vector2(0, -10), 1);
     weapon[2] = new Laser(gBlue, 20, gZero, Vector2(0, -1), 1);
     for (int i = 0; i < 3; i++) assert(weapon[i]);
+                   
 }
 
 Thunder::~Thunder () {
@@ -45,6 +47,12 @@ void Thunder::Move(double deltaT) {
     if (position.y < size_y / 2) position.y = size_y / 2;
     if (position.y > WINDOW_HEI - size_y / 2) position.y = WINDOW_HEI - size_y / 2;
 }
+
+void Thunder::upgrade(int upLevel, MissileList &missiles) {
+    this->missileType = (this->missileType + upLevel) % 3;
+    this->SwitchWeapon(MissileType(this->missileType), missiles);
+}
+
 
 /* Draw the thunder plane */
 void Thunder::Draw(){
