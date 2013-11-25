@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include "texture_loader.h"
 #include "vector.h"
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"

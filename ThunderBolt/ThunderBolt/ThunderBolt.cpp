@@ -14,7 +14,7 @@ void ThunderBolt::drawBackground() {
     glEnd();
 }
 
-//TODO
+
 void ThunderBolt::drawStartMenu() {
     glBegin(GL_QUADS);
     if (game_option == MANUE_OPTION_START) {
@@ -83,7 +83,16 @@ void ThunderBolt::drawPauseMenu() {
 
 void ThunderBolt::resetGame() {
     cleanUp();
-    setup();
+    glClearColor(0, 0, 0, 1);
+    glShadeModel(GL_SMOOTH);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    this->state = GAME_START;
+    this->terminate = 0;
+    this->game_option = MANUE_OPTION_START;
+    generateEnemy();
+    generatePrize();
+    generatePlayer();
 }
 
 void ThunderBolt::draw() {
@@ -113,10 +122,7 @@ void ThunderBolt::draw() {
         FOR_EACH(node, playerMissleList) {
             node->dat->Draw();
         }
-        
-        glShadeModel(GL_SMOOTH);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         pNode = prizeList.getFront();
         FOR_EACH(pNode, prizeList) {
             pNode->dat->Draw();
@@ -130,12 +136,9 @@ void ThunderBolt::draw() {
 }
 
 void ThunderBolt::setup() {
-    this->state = GAME_START;
-    this->terminate = 0;
-    this->game_option = MANUE_OPTION_START;
-    generateEnemy();
-    //generatePrize();
-    generatePlayer();
+    FsOpenWindow(16, 16, WINDOW_WID, WINDOW_HEI, 1);
+    textureInit();
+    resetGame();
 }
 
 void ThunderBolt::generateEnemy() {
@@ -169,7 +172,7 @@ void ThunderBolt::generatePlayer() {
 
 //TODO
 void ThunderBolt::generatePrize() {
-    textureInit();
+    
     WeaponUpgrade::LoadTexture("pic/red.png", "pic/green.png", "pic/blue.png");
     for (int i = 0; i < 5; i++) {
         Plane *plane;
@@ -307,10 +310,8 @@ void ThunderBolt::cleanUp() {
 
 
 void ThunderBolt::run() {
-    FsOpenWindow(16, 16, WINDOW_WID, WINDOW_HEI, 1);
-    FsPollDevice();
-    glShadeModel(GL_SMOOTH);
     
+    FsPollDevice();
     while (!terminate) {
         FsPollDevice();
         int key = FsInkey();
