@@ -71,6 +71,13 @@ int Missile::getState() const{
     return state;
 }
 
+void Missile::setPower(int power) {
+    this->power = power;
+}
+
+int Missile::getPower() const {
+    return power;
+}
 
 /* check if current missile is still active.
  * @return 1 if in window, 0 otherwise */

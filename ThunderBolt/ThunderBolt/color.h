@@ -25,6 +25,8 @@ extern const Color gWhite;
 extern const Color gRed;
 extern const Color gGreen;
 extern const Color gBlue;
+extern const Color gYellow;
+extern const Color gPurple;
 
 
 #endif

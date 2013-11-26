@@ -57,6 +57,8 @@ public:
     void setState(int state);
     int getState() const;
     
+    void setPower(int power);
+    int getPower() const;
 
     virtual void Draw(void) = 0;
     virtual int CheckInWindow(void);

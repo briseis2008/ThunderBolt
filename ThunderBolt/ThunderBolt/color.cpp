@@ -63,3 +63,5 @@ const Color gWhite(255, 255, 255);
 const Color gRed(255, 0, 0);
 const Color gGreen(0, 255, 0);
 const Color gBlue(0, 0, 255);
+const Color gYellow(255, 255, 0);
+const Color gPurple(255, 0, 255);

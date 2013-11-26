@@ -14,6 +14,7 @@
 #include "debug.h"
 
 
+
 /* default constructor */
 Plane::Plane()
 {
@@ -283,6 +284,7 @@ void Plane::Shoot(int action, MissileList &missiles){
         /* create a new missile according to our armory */
         Missile *newMissile = CopyMissile(missile);
         newMissile->setPosition(shootPosition);
+        
         /* missile gets the same direction as plane */
         newMissile->setDirection(direction);
         
@@ -314,10 +316,10 @@ void Plane::Shoot(int action, MissileList &missiles){
            bullets. It's here for demo purpose ONLY. We should come up with
            some structured code that emits bullets according to current
            missile_level */
-        /*********** ATTENTION: Below is a temporary hack ONLY! ***************/
+        /*********** ATTENTION: Below is a temporary hack ONLY! ***************
+        
         {
             if (newMissile->getType() == BULLET) {
-                /* just generate 4 more bullets, and shoot them! */
                 newMissile = CopyMissile(missile);
                 newMissile->setPosition(shootPosition+ Vector2(5, 0));
                 newMissile->setDirection(direction);
@@ -338,8 +340,6 @@ void Plane::Shoot(int action, MissileList &missiles){
                 newMissile->setDirection(direction);
                 missiles.InsertBack(newMissile);
     
-                /* 5 more bullets in right upper direction, the key is to rotate
-                   direction by some degree alpha */
                 Vector2 newDirection = direction;
                 newDirection.rotate(0.5);
                 
@@ -367,10 +367,7 @@ void Plane::Shoot(int action, MissileList &missiles){
                 newMissile->setPosition(shootPosition+ Vector2(25, 25));
                 newMissile->setDirection(newDirection);
                 missiles.InsertBack(newMissile);
-                
-                
-                /* 5 more bullets in left upper direction, the key is to rotate
-                   direction back by 2*alpha */
+ 
                 newDirection.rotate(-1);
                 newMissile = CopyMissile(missile);
                 newMissile->setPosition(shootPosition+ Vector2(-5, 5));
@@ -399,7 +396,7 @@ void Plane::Shoot(int action, MissileList &missiles){
     
             }
         }
-        /*********** ATTENTION: Above is a temporary hack ONLY! ***************/
+        *********** ATTENTION: Above is a temporary hack ONLY! ***************/
         
     } else {
         ReloadLaser(missiles);
