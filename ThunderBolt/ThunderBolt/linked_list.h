@@ -31,7 +31,10 @@ public:
     ListNode<T>* InsertFront(const T &dat);
     ListNode<T>* InsertBack(const T &dat);
 
-    /* delete current node, and return original next node */
+    /* remove current node, and return original next node */
+    ListNode<T>* Remove(ListNode<T> *node);
+    /* delete current node, which also free node->dat. Should use this instead
+     * of Remove() if your node->dat points to dynamically allocated memory */
     ListNode<T>* Delete(ListNode<T> *node);
     void CleanUp();
 };
@@ -90,7 +93,7 @@ ListNode<T>* DoublyLinkedList<T>::InsertBack(const T &dat) {
 }
 
 template <class T>
-ListNode<T>* DoublyLinkedList<T>::Delete(ListNode<T> *node) {
+ListNode<T>* DoublyLinkedList<T>::Remove(ListNode<T> *node) {
     /* you got be kidding me, right? :) */
     if (!node) return NULL;
 
@@ -106,6 +109,15 @@ ListNode<T>* DoublyLinkedList<T>::Delete(ListNode<T> *node) {
 
     delete node;
     return next;
+}
+
+
+/* Only use this version instead of Remove() if your node->dat contain
+ * dynamically allocated memory */
+template <class T>
+ListNode<T>* DoublyLinkedList<T>::Delete(ListNode<T> *node) {
+    delete node->dat;
+    return Remove(node);
 }
 
 

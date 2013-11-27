@@ -17,7 +17,7 @@ void ThunderBolt::drawBackground() {
 
 void ThunderBolt::drawStartMenu() {
     glBegin(GL_QUADS);
-    if (game_option == MANUE_OPTION_START) {
+    if (game_option == MENU_OPTION_START) {
         glColor3ub(255, 255, 255);
     }
     else {
@@ -37,7 +37,7 @@ void ThunderBolt::drawStartMenu() {
     
     
     glBegin(GL_QUADS);
-    if (game_option == MANUE_OPTION_QUIT) {
+    if (game_option == MENU_OPTION_QUIT) {
         glColor3ub(255, 255, 255);
     }
     else {
@@ -59,7 +59,7 @@ void ThunderBolt::drawStartMenu() {
 void ThunderBolt::drawPauseMenu() {
     this->drawBackground();
     glBegin(GL_QUADS);
-    if (game_option == MANUE_OPTION_CONTINUE) {
+    if (game_option == MENU_OPTION_CONTINUE) {
         glColor3ub(255, 255, 255);
     }
     else {
@@ -89,7 +89,7 @@ void ThunderBolt::resetGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     this->state = GAME_START;
     this->terminate = 0;
-    this->game_option = MANUE_OPTION_START;
+    this->game_option = MENU_OPTION_START;
     generateEnemy();
     generatePrize();
     generatePlayer();
@@ -172,7 +172,6 @@ void ThunderBolt::generatePlayer() {
 
 //TODO
 void ThunderBolt::generatePrize() {
-    
     WeaponUpgrade::LoadTexture("pic/red.png", "pic/green.png", "pic/blue.png");
     for (int i = 0; i < 5; i++) {
         Plane *plane;
@@ -184,12 +183,12 @@ void ThunderBolt::generatePrize() {
 void ThunderBolt::gameStart(int key) {
     switch (key) {
         case FSKEY_UP:
-            if (game_option == MANUE_OPTION_QUIT) {
+            if (game_option == MENU_OPTION_QUIT) {
                 game_option--;
             }
             break;
         case FSKEY_DOWN:
-            if (game_option == MANUE_OPTION_START) {
+            if (game_option == MENU_OPTION_START) {
                 game_option++;
             }
             break;
@@ -204,20 +203,20 @@ void ThunderBolt::gameStart(int key) {
 void ThunderBolt::gamePause(int key) {
     switch (key) {
         case FSKEY_UP:
-            if (game_option != MANUE_OPTION_CONTINUE) {
+            if (game_option != MENU_OPTION_CONTINUE) {
                 game_option--;
             }
             break;
             
         case FSKEY_DOWN:
-            game_option = (game_option + 1) % MANUE_OPTION_MAX;
+            game_option = (game_option + 1) % MENU_OPTION_MAX;
             break;
             
         case FSKEY_ENTER:
-            if (game_option == MANUE_OPTION_CONTINUE) {
+            if (game_option == MENU_OPTION_CONTINUE) {
                 state = GAME_RUNNING;
             }
-            else if (game_option == MANUE_OPTION_START) {
+            else if (game_option == MENU_OPTION_START) {
                 resetGame();
                 state = GAME_RUNNING;
             }
@@ -253,7 +252,7 @@ void ThunderBolt::gameRun(int key) {
     
     
     /* traverse the missiles list, move missile, and check hit with that
-     immortal enemy, just for test CheckHit function */
+       immortal enemy, just for test CheckHit function */
     MissileNode *node;
     node = playerMissleList.getFront();
     while(node) {
@@ -277,10 +276,12 @@ void ThunderBolt::gameRun(int key) {
         if (!pNode->dat->CheckInWindow()) {
             pNode = enemyList.Delete(pNode);
         } else {
-            if (pNode->dat->CheckHit(playerMissleList))
+            if (pNode->dat->CheckHit(playerMissleList)) {
                 pNode = enemyList.Delete(pNode);
-            else
+            }
+            else {
                 pNode = pNode->next;
+            }
         }
     }
     
@@ -289,14 +290,15 @@ void ThunderBolt::gameRun(int key) {
     pNode = prizeList.getFront();
     while (pNode) {
         pNode->dat->Move(1.0);
-        
         if (((Prize *)(pNode->dat))->Dead()) {
-            prizeList.Delete(pNode);
+            pNode = prizeList.Delete(pNode);
             Plane *plane;
             plane = new WeaponUpgrade();
             prizeList.InsertBack(plane);
         }
-        pNode = pNode->next;
+        else {
+            pNode = pNode->next;
+        }
     }
 }
 
@@ -327,7 +329,6 @@ void ThunderBolt::run() {
                 else {
                     gameRun(key);
                 }
-                
                 break;
             case GAME_PAUSE:
                 gamePause(key);

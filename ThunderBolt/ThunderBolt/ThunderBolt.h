@@ -25,10 +25,10 @@
 #define GAME_END      2
 #define GAME_PAUSE    3
 
-#define MANUE_OPTION_CONTINUE 0
-#define MANUE_OPTION_START    1
-#define MANUE_OPTION_QUIT     2
-#define MANUE_OPTION_MAX      3
+#define MENU_OPTION_CONTINUE 0
+#define MENU_OPTION_START    1
+#define MENU_OPTION_QUIT     2
+#define MENU_OPTION_MAX      3
 
 #define ENEMY_NUM_MAX  10
 

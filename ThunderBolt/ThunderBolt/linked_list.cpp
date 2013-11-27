@@ -27,7 +27,7 @@ int main () {
     node = list.getFront();
     while(node) {
         if (node->dat == 4) {
-            node = list.Delete(node);
+            node = list.Remove(node);
         } else {
             node = node->next;
         }
