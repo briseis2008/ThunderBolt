@@ -138,6 +138,7 @@ int Boss::CheckHit(MissileList &missiles) {
             rightArm.CheckHit(node->dat) ||
             midArm.CheckHit(node->dat)) {
             /* if hit by a missile, we get hurt :( */
+            //TODO: life minus twice
             life -= node->dat->getPower();
             
             /* the missile will disappear after collision, unless it's laser */
