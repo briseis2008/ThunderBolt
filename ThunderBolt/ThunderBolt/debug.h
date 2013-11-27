@@ -8,7 +8,7 @@
 //#define TEXTURE_LOADER_DEBUG
 //#define EXPLOSION_DEBUG
 //#define GAME_DEBUG
-#define BOSS_DEBUG
+#define LAZERENEMY_DEBUG
 
 #include <stdio.h>
 

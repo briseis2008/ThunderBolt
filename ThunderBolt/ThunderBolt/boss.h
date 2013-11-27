@@ -2,6 +2,7 @@
 #define THUNDERBOLT_BOSS_H
 
 #include "plane.h"
+#include "Arm.h"
 
 
 /* The idea of boss:
@@ -13,17 +14,7 @@
  * This is just an demonstration of boss. 
  * Feel free to implement your own version! */
 
-class Arm : public Plane {
-    Color color;
-public:
-    Arm (const Vector2 &position, const Vector2 &direction, Color color)
-    : Plane(position, direction, PLANE_NORMAL, 50, 50, 1000) {
-        this->color = color;
-    };
-    virtual void Init(MissileList &missiles);
-    virtual void Draw();
-    virtual void SetPosition(const Vector2 &position);
-};
+
 
 class BossLeftArm : public Arm {
 public:

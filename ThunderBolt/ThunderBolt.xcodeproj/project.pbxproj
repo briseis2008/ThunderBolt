@@ -22,6 +22,8 @@
 		0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C34182187FB00FC094A /* yspngenc.cpp */; };
 		0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C391821880A00FC094A /* fsmacosxwrappercpp.cpp */; };
 		0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B774C3A1821880A00FC094A /* fsmacosxwrapperobjc.m */; };
+		0BCF3A3718466857001CF6F0 /* LazerEnemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCF3A3518466857001CF6F0 /* LazerEnemy.cpp */; };
+		0BCF3A3A18466867001CF6F0 /* Arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCF3A3818466867001CF6F0 /* Arm.cpp */; };
 		0BDD66A41823160A005D635D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A21823160A005D635D /* Plane.cpp */; };
 		0BDD66A9182317D5005D635D /* vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A5182317D5005D635D /* vector.cpp */; };
 		0BDD66AA182317D5005D635D /* missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD66A8182317D5005D635D /* missile.cpp */; };
@@ -74,6 +76,10 @@
 		0B774C391821880A00FC094A /* fsmacosxwrappercpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fsmacosxwrappercpp.cpp; sourceTree = "<group>"; };
 		0B774C3A1821880A00FC094A /* fsmacosxwrapperobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fsmacosxwrapperobjc.m; sourceTree = "<group>"; };
 		0B774C3B1821880A00FC094A /* fssimplewindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fssimplewindow.h; sourceTree = "<group>"; };
+		0BCF3A3518466857001CF6F0 /* LazerEnemy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazerEnemy.cpp; sourceTree = "<group>"; };
+		0BCF3A3618466857001CF6F0 /* LazerEnemy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazerEnemy.h; sourceTree = "<group>"; };
+		0BCF3A3818466867001CF6F0 /* Arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arm.cpp; sourceTree = "<group>"; };
+		0BCF3A3918466867001CF6F0 /* Arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arm.h; sourceTree = "<group>"; };
 		0BDD66A21823160A005D635D /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
 		0BDD66A31823160A005D635D /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
 		0BDD66A5182317D5005D635D /* vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vector.cpp; sourceTree = "<group>"; };
@@ -169,6 +175,10 @@
 		0B774C001821870500FC094A /* ThunderBolt */ = {
 			isa = PBXGroup;
 			children = (
+				0BCF3A3818466867001CF6F0 /* Arm.cpp */,
+				0BCF3A3918466867001CF6F0 /* Arm.h */,
+				0BCF3A3518466857001CF6F0 /* LazerEnemy.cpp */,
+				0BCF3A3618466857001CF6F0 /* LazerEnemy.h */,
 				122F563C1840144A00BF847D /* boss.cpp */,
 				122F563D1840144A00BF847D /* boss.h */,
 				122F563E1840144A00BF847D /* enemy.cpp */,
@@ -348,12 +358,14 @@
 				0BDD66AA182317D5005D635D /* missile.cpp in Sources */,
 				0B774C38182187FB00FC094A /* yspngenc.cpp in Sources */,
 				124412E51836F80C00DA388F /* texture_loader.cpp in Sources */,
+				0BCF3A3A18466867001CF6F0 /* Arm.cpp in Sources */,
 				0B774C37182187FB00FC094A /* yspng.cpp in Sources */,
 				122F56451840144A00BF847D /* enemy.cpp in Sources */,
 				122F56441840144A00BF847D /* boss.cpp in Sources */,
 				0B774C3D1821880A00FC094A /* fsmacosxwrapperobjc.m in Sources */,
 				124412E61836F80C00DA388F /* ThunderBolt.cpp in Sources */,
 				122F56461840144A00BF847D /* explosion.cpp in Sources */,
+				0BCF3A3718466857001CF6F0 /* LazerEnemy.cpp in Sources */,
 				124412E41836F80C00DA388F /* prize.cpp in Sources */,
 				0B774C3C1821880A00FC094A /* fsmacosxwrappercpp.cpp in Sources */,
 				0BDD66A9182317D5005D635D /* vector.cpp in Sources */,

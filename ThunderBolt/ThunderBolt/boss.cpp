@@ -7,25 +7,6 @@
 #include "ysglfontdata.h"
 
 
-void Arm::Draw() {
-    glColor3ub(color.r(), color.g(), color.b());
-    
-    glBegin(GL_POLYGON);
-    glVertex2d(position.x + direction.x * size_y/2,
-               position.y + direction.y * size_y/2);
-    glVertex2d(position.x - direction.x * size_y/2 + direction.y * size_x/2,
-               position.y - direction.y * size_y/2 - direction.x * size_x/2);
-    glVertex2d(position.x - direction.x * size_y/2 - direction.y * size_x/2,
-               position.y - direction.y * size_y/2 + direction.x * size_x/2);
-    glEnd();
-}
-
-void Arm::Init(MissileList &missiles) { }
-
-void Arm::SetPosition(const Vector2 &newPosition) {
-    position = newPosition;
-}
-
 void BossLeftArm::Init(MissileList &missiles) {
     Missile *weapon = new Bullet(gPurple, 300, gZero, Vector2(0, -20), 1);
     setMissile(weapon, missiles);
@@ -166,7 +147,7 @@ void Boss::Disappear(MissileList &missiles) {
     alive = false;
     midArm.ReloadLaser(missiles);
 }
-
+/*
 void PrintPower(int power)
 {
     char str[256];
@@ -178,7 +159,7 @@ void PrintPower(int power)
     glRasterPos2d(100,700);
     YsGlDrawFontBitmap8x12(str);
 }
-
+*/
 #ifdef BOSS_DEBUG
 int main(void){
     Vector2 startPosition(300, 500);
